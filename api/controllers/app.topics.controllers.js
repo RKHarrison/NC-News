@@ -1,0 +1,5 @@
+exports.getTopics = (req, res, next) => {
+  fetchTopics().then((topics) => {
+    res.status.send({ topics });
+  });
+};
