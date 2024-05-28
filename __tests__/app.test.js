@@ -57,9 +57,8 @@ describe('GET /api/articles/:article_id', () => {
         return request(app)
         .get('/api/articles/1')
         .expect(200)
-        .then(({body}) => {
-            const article = body.article
-            const expectedResult = endpointsJsonFile["GET /api/articles/:article_id"].exampleResponse
+        .then(({body:article}) => {
+            const expectedResult = endpointsJsonFile["GET /api/articles/:article_id"].exampleResponse.article
             expect(article).toMatchObject(expectedResult)
         })
     });
