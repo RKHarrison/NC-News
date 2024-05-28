@@ -1,9 +1,10 @@
 const express = require('express');
-const {getTopics} = require('./controllers/app.topics.controllers')
+const {getTopics, getEndpoints} = require('./controllers/app.topics.controllers')
 const {handleGeneric404Errors, handleServerErrors} = require('./errorHandling/index')
 const app = express()
 
 app.get("/api/topics", getTopics)
+app.get("/api", getEndpoints)
 
 
 app.use(handleGeneric404Errors)

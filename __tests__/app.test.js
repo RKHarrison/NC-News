@@ -3,6 +3,7 @@ const app = require("../api/app");
 const db = require("../db/connection");
 const data = require("../db/data/test-data/index")
 const seed = require("../db/seeds/seed");
+const endpointsJsonFile = require('../endpoints.json')
 
 beforeEach(() => {
   return seed(data);
@@ -36,4 +37,17 @@ describe("GET /api/topics", () => {
         expect(errorMsg).toBe("Route Not Found");
       });
   });
+});
+
+describe('GET /api', () => {
+    it('200: responds with an object containing each available endpoint and description', () => {
+        return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({body: endpoints}) => {
+            const expectedResults = endpointsJsonFile
+            expect(endpoints).toEqual(expectedResults)
+        })
+    });
+    
 });
