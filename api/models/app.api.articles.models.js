@@ -8,8 +8,12 @@ exports.fetchArticleById = (article_id) => {
     WHERE article_id = $1
     `;
 
-    return db.query(sqlQuery, queryValues).then(article => {
-        console.log(article.rows[0]);
-        return article.rows[0]
+    return db.query(sqlQuery, queryValues).then(data => {
+        const article = data.rows[0]
+
+        if(!article) {
+            return Promise.reject({status: 404, msg: 'Not Found'})
+        }
+        return article
     })
 };
