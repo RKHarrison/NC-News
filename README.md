@@ -1,6 +1,15 @@
 # Northcoders News API
+---
+NOTE TO DEVELOPERS: 
+Please add your own environment variables to any cloned version of this repo in order to successfully connect locally to the two included databses. 
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+In the main folder, create two files named .env.test and .env.deleopment, to reference either database as required. Within the file(s), use the syntax: "PGDATABASE=database_name_here" and include the appropriate database name.
+
+PLEASE MAKE SURE THESE FILES ARE ADDED TO .gitignore and that the database names are not shared publicly!
+---
+
+
+
 
 
 
