@@ -7,7 +7,8 @@
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "query-test-db": "psql -f ./db/query-test-db.sql > ./db/test-db-queries.txt"
   },
   "repository": {
     "type": "git",
@@ -30,7 +31,7 @@
   "dependencies": {
     "dotenv": "^16.0.0",
     "fs": "^0.0.1-security",
-    "pg": "^8.7.3"
+    "pg": "^8.11.5"
   },
   "jest": {
     "setupFilesAfterEnv": [
