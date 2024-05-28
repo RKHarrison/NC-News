@@ -62,4 +62,22 @@ describe('GET /api/articles/:article_id', () => {
             expect(article).toMatchObject(expectedResult)
         })
     });
+    it("404: responds with 'Not Found' when given valid but non-existing id", () => {
+      return request(app)
+      .get('/api/articles/987654321')
+      .expect(404)
+      .then(({body}) =>{
+        const errorMsg = body.msg
+        expect(errorMsg).toBe("Not Found")
+      })
+    })
+    it("400: responds with 'Bad Request' when failing schema validation", () => {
+      return request(app)
+      .get('/api/articles/notAValidId')
+      .expect(400)
+      .then(({body}) =>{
+        const errorMsg = body.msg
+        expect(errorMsg).toBe("Bad Request")
+      })
+    })
 });
