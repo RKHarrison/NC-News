@@ -17,3 +17,28 @@ exports.fetchArticleById = (article_id) => {
         return article
     })
 };
+
+exports.fetchArticles = () =>{
+    const sqlQuery = `
+    SELECT     a.created_at, 
+    a.article_id, 
+    a.author, 
+    title, 
+    topic, 
+    a.votes, 
+    a.article_id, 
+    COUNT(comment_id) AS comment_count
+FROM articles a
+LEFT JOIN comments c ON a.article_id = c.article_id
+GROUP BY   a.title,
+    a.created_at, 
+    a.article_id, 
+    a.author, 
+    a.title, 
+    a.topic, 
+    a.votes
+ORDER BY a.created_at DESC;
+`
+
+return db.query(sqlQuery).then(articles => articles.rows)
+}
