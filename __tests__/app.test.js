@@ -45,7 +45,7 @@ describe('GET /api', () => {
         .get("/api")
         .expect(200)
         .then(({body: endpoints}) => {
-            const expectedResults = endpointsJsonFile["GET /api"].exampleResponse
+            const expectedResults = endpointsJsonFile
             expect(endpoints).toEqual(expectedResults)
         })
     });

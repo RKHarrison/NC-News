@@ -11,7 +11,7 @@ exports.fetchEndpoints = () => {
 
   return fs.readFile(pathToEndpointsJson, "utf-8").then((data) => {
     const parsedData = JSON.parse(data)
-    const endpoints = parsedData["GET /api"].exampleResponse
+    const endpoints = parsedData
     return endpoints
   });
 };
