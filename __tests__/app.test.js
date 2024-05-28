@@ -12,7 +12,7 @@ afterAll(() => {
 });
 
 describe("GET /api/topics", () => {
-  it("200 respond with an array of objects with correct properties", () => {
+  it("200: responds with an array of objects with correct properties", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -25,6 +25,15 @@ describe("GET /api/topics", () => {
             slug: expect.any(String),
           });
         });
+      });
+  });
+  it("404: responds 'not a route' when receives a request to an undefined endpoint ", () => {
+    return request(app)
+      .get("/api/UNDEFINED")
+      .expect(404)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Route Not Found");
       });
   });
 });
