@@ -51,3 +51,16 @@ describe('GET /api', () => {
     });
     
 });
+
+describe('GET /api/articles/:article_id', () => {
+    it('200: responds with an object matching the requested id, with correct properties', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+            const article = body.article
+            const expectedResult = endpointsJsonFile["GET /api/articles/:article_id"].exampleResponse
+            expect(article).toMatchObject(expectedResult)
+        })
+    });
+});
