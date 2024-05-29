@@ -206,7 +206,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("User Not Found");
+        expect(errorMsg).toBe("Resource Not Found");
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing article id", () => {

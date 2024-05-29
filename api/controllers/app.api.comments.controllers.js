@@ -25,7 +25,7 @@ exports.postCommentByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { username, body } = req.body;
 
-  Promise.all([checkArticleExists(article_id), checkUserExists(username)])
+  Promise.all([checkExists("articles", "article_id", article_id), checkExists("users", "username", username)])
     .then(() => {
       return insertCommentByArticleId(article_id, username, body);
     })
