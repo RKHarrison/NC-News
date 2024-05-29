@@ -317,7 +317,7 @@ describe("DELETE /api/comments/:comment_id", () => {
       .delete("/api/comments/987654321")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Comment Not Found");
+        expect(body.msg).toBe("Resource Not Found");
       });
   });
   it("400: Returns Bad Request when given invalid comment id", () => {
