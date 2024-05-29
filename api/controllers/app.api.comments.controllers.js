@@ -1,11 +1,9 @@
-const { checkArticleExists } = require("../models/app.api.articles.models");
-const { checkUserExists } = require("../models/app.api.users.models");
 const {
   fetchCommentsByArticleId,
   insertCommentByArticleId,
   removeCommentById,
-  checkCommentExists,
 } = require("../models/app.api.comments.models");
+const checkExists = require("../utils/check-exists")
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
@@ -41,7 +39,7 @@ exports.postCommentByArticleId = (req, res, next) => {
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
 
-  checkCommentExists(comment_id)
+  checkExists("comments", "comment_id", comment_id)
     .then(() => {
       return removeCommentById(comment_id);
     })
