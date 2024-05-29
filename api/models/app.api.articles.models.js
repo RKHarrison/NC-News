@@ -38,20 +38,6 @@ exports.fetchArticleById = (article_id) => {
     })
 };
 
-exports.checkArticleExists = (article_id) => {
-
-    const sqlQuery = 'SELECT * FROM articles WHERE article_id = $1'
-
-    return db.query(sqlQuery, [article_id])
-    .then(({rows}) => {
-        const article = rows[0]
-        
-        if(!article) {
-            return Promise.reject({status: 404, msg: 'Resource Not Found'})
-        }
-    })
-}
-
 exports.updateArticleById = (article_id, inc_votes) => {
     const queryValues = [inc_votes, article_id];
     const sqlQuery = `
