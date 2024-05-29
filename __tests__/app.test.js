@@ -177,7 +177,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
   it("400: responds 'Bad Post Request' when newComment object has malformed body/missing fields", () => {
-    const newComment = {username: "butter_bridge"};
+    const newComment = { username: "butter_bridge" };
     return request(app)
       .post("/api/articles/3/comments")
       .send(newComment)
@@ -227,6 +227,37 @@ describe("POST /api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         const errorMsg = body.msg;
         expect(errorMsg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  it("200: updates article value by postive integer and responds with updated article object", () => {
+    const incomingVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incomingVotes)
+      .expect(200)
+      .then(({ body }) => {
+        const patchedArticle = body.patchedArticle;
+        expect(patchedArticle).toMatchObject({
+          article_id: 1,
+          votes: 101,
+        });
+      });
+  });
+  it("200: updates article value by negative integer and responds with updated article object", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incrementVotes)
+      .expect(200)
+      .then(({ body }) => {
+        const patchedArticle = body.patchedArticle;
+        expect(patchedArticle).toMatchObject({
+          article_id: 1,
+          votes: 0,
+        });
       });
   });
 });
