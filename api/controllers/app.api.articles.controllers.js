@@ -2,6 +2,7 @@ const {
   fetchArticles,
   fetchArticleById,
   updateArticleById,
+  checkArticleExists,
 } = require("../models/app.api.articles.models");
 
 exports.getArticles = (req, res, next) => {
@@ -22,9 +23,12 @@ exports.getArticleById = (req, res, next) => {
 
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  const {inc_votes} = req.body
+  const { inc_votes } = req.body;
 
-  updateArticleById(article_id, inc_votes)
+  checkArticleExists(article_id)
+    .then(() => {
+      return updateArticleById(article_id, inc_votes);
+    })
     .then((patchedArticle) => {
       res.status(200).send({ patchedArticle });
     })

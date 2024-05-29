@@ -260,4 +260,48 @@ describe("PATCH /api/articles/:article_id", () => {
         });
       });
   });
+  it.only("400: responds 'Bad Patch Request' when patch object has malformed body/missing fields", () => {
+    const incrementVotes = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad PATCH Request");
+      });
+  });
+  it.only("400: responds 'Bad Patch Request' when patch object failing input schema validation", () => {
+    const incrementVotes = { inc_votes: "INVALID_INPUT" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad PATCH Request");
+      });
+  });
+  it.only("404: responds 'Not Found' when given valid but non-existing article id", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/articles/987654321")
+      .send(incrementVotes)
+      .expect(404)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Resource Not Found");
+      });
+  });
+  it("400: responds with 'Bad Request' when failing article id schema validation", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/articles/NOTAVALIDID")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad Request");
+      });
+  });
 });
