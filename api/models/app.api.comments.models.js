@@ -21,3 +21,11 @@ exports.insertCommentByArticleId = (article_id, username, body) => {
 
     return db.query(sqlQuery, queryValues).then(({rows}) => rows[0])
 };
+
+exports.removeCommentById = (comment_id) => {
+  
+  const queryValues = [comment_id];
+  const sqlQuery = "DELETE FROM comments WHERE comment_id = $1";
+  return db.query(sqlQuery, queryValues);
+};
+

@@ -3,6 +3,7 @@ const { checkUserExists } = require("../models/app.api.users.models");
 const {
   fetchCommentsByArticleId,
   insertCommentByArticleId,
+  removeCommentById
 } = require("../models/app.api.comments.models");
 
 exports.getCommentsByArticleId = (req, res, next) => {
@@ -30,3 +31,11 @@ exports.postCommentByArticleId = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.deleteCommentById = (req,res,next) => {
+  const { comment_id } = req.params
+
+  removeCommentById(comment_id).then(()  => {
+    res.status(204).send()
+  }).catch(next)
+}

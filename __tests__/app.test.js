@@ -305,3 +305,11 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  it('204 deletes the given comment by comment_id and responds with no content', () => {
+    return request(app)
+    .delete("/api/comments/1")
+    .expect(204)
+  });
+});
