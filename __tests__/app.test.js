@@ -112,12 +112,12 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        const commentsForArticle = body.commentsForArticle;
-        expect(commentsForArticle).toHaveLength(11);
-        expect(commentsForArticle).toBeSortedBy("created_at", {
+        const commentsForArticleId = body.commentsForArticleId;
+        expect(commentsForArticleId).toHaveLength(11);
+        expect(commentsForArticleId).toBeSortedBy("created_at", {
           descending: true,
         });
-        commentsForArticle.forEach((comment) => {
+        commentsForArticleId.forEach((comment) => {
           expect(comment).toMatchObject({
             article_id: 1,
             body: expect.any(String),
@@ -134,9 +134,9 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/2/comments")
       .expect(200)
       .then(({ body }) => {
-        const commentsForArticle = body.commentsForArticle;
-        expect(commentsForArticle).toHaveLength(0);
-        expect(commentsForArticle).toBeInstanceOf(Array);
+        const commentsForArticleId = body.commentsForArticleId;
+        expect(commentsForArticleId).toHaveLength(0);
+        expect(commentsForArticleId).toBeInstanceOf(Array);
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing article id", () => {

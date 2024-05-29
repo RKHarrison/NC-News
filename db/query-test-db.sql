@@ -19,5 +19,5 @@
             a.votes
  ORDER BY   a.created_at DESC;
 
---  select * from comments
+ select * from comments
     
