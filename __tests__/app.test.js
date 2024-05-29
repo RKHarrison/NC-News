@@ -129,4 +129,33 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
+  it("200: responds with empty array of comments given existing article id with no comments linked to it ", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const commentsForArticle = body.commentsForArticle;
+        expect(commentsForArticle).toHaveLength(0);
+        expect(commentsForArticle).toBeInstanceOf(Array);
+      });
+  });
+  it("404: responds 'Not Found' when given valid but non-existing article id", () => {
+    return request(app)
+      .get("/api/articles/987654321/comments")
+      .expect(404)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Not Found");
+      });
+  });
+
+  it("400: responds with 'Bad Request' when failing schema validation", () => {
+    return request(app)
+      .get("/api/articles/notAValidId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad Request");
+      });
+  });
 });
