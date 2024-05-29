@@ -159,7 +159,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("POST /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   it("201: adds new comment for article by article id, and responds with posted comment object", () => {
     const newComment = { username: "butter_bridge", body: "very nice" };
     return request(app)
@@ -176,8 +176,8 @@ describe.only("POST /api/articles/:article_id/comments", () => {
         });
       });
   });
-  it("400: malformed body/missing fields", () => {
-    const newComment = {};
+  it("400: responds 'Bad Post Request' when newComment object has malformed body/missing fields", () => {
+    const newComment = {username: "butter_bridge"};
     return request(app)
       .post("/api/articles/3/comments")
       .send(newComment)
@@ -187,8 +187,8 @@ describe.only("POST /api/articles/:article_id/comments", () => {
         expect(errorMsg).toBe("Bad Post Request");
       });
   });
-  it.only("400: responds 'Bad Request' when newComment object failing input schema validation ", () => {
-    const newComment = { username: 987654321, body: "very nice" };
+  it("400: responds 'Bad Post Request' when newComment object failing input schema validation ", () => {
+    const newComment = { username: "butter_bridge", body: null };
     return request(app)
       .post("/api/articles/3/comments")
       .send(newComment)
@@ -201,12 +201,12 @@ describe.only("POST /api/articles/:article_id/comments", () => {
   it("404: responds 'Not Found' when given valid but non-existing author", () => {
     const newComment = { username: "NOTFOUND", body: "very nice" };
     return request(app)
-      .post("/api/articles/987654321/comments")
+      .post("/api/articles/3/comments")
       .send(newComment)
       .expect(404)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Username Not Found");
+        expect(errorMsg).toBe("User Not Found");
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing article id", () => {
@@ -214,6 +214,7 @@ describe.only("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/987654321/comments")
       .expect(404)
+      .send(newComment)
       .then(({ body }) => {
         const errorMsg = body.msg;
         expect(errorMsg).toBe("Resource Not Found");
