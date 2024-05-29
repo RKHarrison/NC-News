@@ -58,10 +58,15 @@ describe("GET /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body}) => {
         const article = body.article
-        const expectedResult =
-          endpointsJsonFile["GET /api/articles/:article_id"].exampleResponse
-            .article;
-        expect(article).toMatchObject(expectedResult);
+        expect(article).toMatchObject({
+          article_id : 1,
+          author : "butter_bridge",
+          title : "Living in the shadow of a great man",
+          body : "I find this existence challenging",
+          created_at : "2020-07-09T20:11:00.000Z",
+          votes : 100,
+          article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        });
       });
   });
   it("404: responds with 'Not Found' when given valid but non-existing id", () => {
@@ -70,7 +75,7 @@ describe("GET /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Not Found");
+        expect(errorMsg).toBe("Resource Not Found");
       });
   });
   it("400: responds with 'Bad Request' when failing schema validation", () => {

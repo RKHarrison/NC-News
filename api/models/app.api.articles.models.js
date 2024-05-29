@@ -12,7 +12,7 @@ exports.fetchArticleById = (article_id) => {
         const article = data.rows[0]
 
         if(!article) {
-            return Promise.reject({status: 404, msg: 'Not Found'})
+            return Promise.reject({status: 404, msg: 'Resource Not Found'})
         }
         return article
     })
