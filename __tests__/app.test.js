@@ -56,16 +56,17 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
-      .then(({ body}) => {
-        const article = body.article
+      .then(({ body }) => {
+        const article = body.article;
         expect(article).toMatchObject({
-          article_id : 1,
-          author : "butter_bridge",
-          title : "Living in the shadow of a great man",
-          body : "I find this existence challenging",
-          created_at : "2020-07-09T20:11:00.000Z",
-          votes : 100,
-          article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          article_id: 1,
+          author: "butter_bridge",
+          title: "Living in the shadow of a great man",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 100,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
         });
       });
   });
@@ -89,19 +90,72 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-describe('GET /api/articles', () => {
-  it('200: responds with array of article objects sorted descending by date created, with correct properties', () => {
+describe("GET /api/articles", () => {
+  it("200: responds with array of article objects sorted descending by date created, with correct properties", () => {
     return request(app)
-    .get("/api/articles")
-    .expect(200)
-    .then(({body}) =>{
-      const articles = body.articles
-      expect(articles).toHaveLength(13)
-      expect(articles).toBeSortedBy('created_at', {descending:true})
-      articles.forEach(article => {
-        expect(article).not.toHaveProperty('body')
-      })
-    })
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body");
+        });
+      });
   });
-  
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("200: responds with an array of comments for the given article id, sorted by most recent, with the correct properties ", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const commentsForArticleId = body.commentsForArticleId;
+        expect(commentsForArticleId).toHaveLength(11);
+        expect(commentsForArticleId).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        commentsForArticleId.forEach((comment) => {
+          expect(comment).toMatchObject({
+            article_id: 1,
+            body: expect.any(String),
+            votes: expect.any(Number),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            comment_id: expect.any(Number),
+          });
+        });
+      });
+  });
+  it("200: responds with empty array of comments given existing article id with no comments linked to it ", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const commentsForArticleId = body.commentsForArticleId;
+        expect(commentsForArticleId).toHaveLength(0);
+        expect(commentsForArticleId).toBeInstanceOf(Array);
+      });
+  });
+  it("404: responds 'Not Found' when given valid but non-existing article id", () => {
+    return request(app)
+      .get("/api/articles/987654321/comments")
+      .expect(404)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Resource Not Found");
+      });
+  });
+
+  it("400: responds with 'Bad Request' when failing schema validation", () => {
+    return request(app)
+      .get("/api/articles/notAValidId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad Request");
+      });
+  });
 });

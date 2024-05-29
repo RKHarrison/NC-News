@@ -41,5 +41,19 @@
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "an array of comments for the given article_id",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "article_id": 1,
+        "body": "I hate streaming noses ",
+        "votes": 0,
+        "author": "icellusedkars",
+        "created_at": "2020-11-03 21:00:00",
+        "comment_id": 5
+      }
+    }
   }
 }

@@ -1,2 +1,4 @@
 node_modules
 .env.*
+test-db-queries.txt
+query-test-db.sql
