@@ -1,23 +1,5 @@
 const db = require("../../db/connection");
 
-exports.fetchArticleById = (article_id) => {
-  const queryValues = [article_id];
-
-  const sqlQuery = `
-    SELECT * FROM articles
-    WHERE article_id = $1
-    `;
-
-    return db.query(sqlQuery, queryValues).then(data => {
-        const article = data.rows[0]
-
-        if(!article) {
-            return Promise.reject({status: 404, msg: 'Resource Not Found'})
-        }
-        return article
-    })
-};
-
 exports.fetchArticles = () =>{
     const sqlQuery = `
     SELECT     a.created_at, 
@@ -41,4 +23,36 @@ ORDER BY a.created_at DESC;
 `
 
 return db.query(sqlQuery).then(articles => articles.rows)
+}
+
+exports.fetchArticleById = (article_id) => {
+  const queryValues = [article_id];
+
+  const sqlQuery = `
+    SELECT * FROM articles
+    WHERE article_id = $1
+    `;
+
+    return db.query(sqlQuery, queryValues).then(({rows}) => {
+        const article = rows[0]
+
+        if(!article) {
+            return Promise.reject({status: 404, msg: 'Resource Not Found'})
+        }
+        return article
+    })
+};
+
+exports.checkArticleExists = (article_id) => {
+
+    const sqlQuery = 'SELECT * FROM articles WHERE article_id = $1'
+
+    return db.query(sqlQuery, [article_id])
+    .then(({rows}) => {
+        const article = rows[0]
+        
+        if(!article) {
+            return Promise.reject({status: 404, msg: 'Resource Not Found'})
+        }
+    })
 }

@@ -145,7 +145,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Not Found");
+        expect(errorMsg).toBe("Resource Not Found");
       });
   });
 
