@@ -75,7 +75,7 @@ describe('GET /api/articles/:article_id', () => {
       .expect(404)
       .then(({body}) =>{
         const errorMsg = body.msg
-        expect(errorMsg).toBe("Not Found")
+        expect(errorMsg).toBe("Resource Not Found")
       })
     })
     it("400: responds with 'Bad Request' when failing schema validation", () => {
