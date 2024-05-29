@@ -148,7 +148,6 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(errorMsg).toBe("Resource Not Found");
       });
   });
-
   it("400: responds with 'Bad Request' when failing schema validation", () => {
     return request(app)
       .get("/api/articles/notAValidId/comments")
@@ -160,21 +159,73 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only('POST /api/articles/:article_id/comments', () => {
-  it('201: adds new comment for article by article id, and responds with posted comment object', () => {
-    const newComment = {username: "butter_bridge", body: "very nice"}
+describe.only("POST /api/articles/:article_id/comments", () => {
+  it("201: adds new comment for article by article id, and responds with posted comment object", () => {
+    const newComment = { username: "butter_bridge", body: "very nice" };
     return request(app)
-    .post("/api/articles/3/comments")
-    .send(newComment)
-    .expect(201)
-    .then(({body}) =>{
-      postedComment = body.postedComment
-      expect(postedComment).toMatchObject({
-        article_id: 3,
-        comment_id: expect.any(Number),
-        body: "very nice",
-        author: "butter_bridge"
-      })
-    })
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        postedComment = body.postedComment;
+        expect(postedComment).toMatchObject({
+          article_id: 3,
+          comment_id: expect.any(Number),
+          body: "very nice",
+          author: "butter_bridge",
+        });
+      });
+  });
+  it.only("400: malformed body/missing fields", () => {
+    const newComment = {};
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad Post Request");
+      });
+  });
+  it("400: responds 'Bad Request' when newComment object failing input schema validation ", () => {
+    const newComment = { username: 987654321, body: "very nice" };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("400 - Bad Request");
+      });
+  });
+  it("404: responds 'Not Found' when given valid but non-existing author", () => {
+    const newComment = { username: "NOTFOUND", body: "very nice" };
+    return request(app)
+      .post("/api/articles/987654321/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Username Not Found");
+      });
+  });
+  it("404: responds 'Not Found' when given valid but non-existing article id", () => {
+    const newComment = { username: "butter_bridge", body: "very nice" };
+    return request(app)
+      .post("/api/articles/987654321/comments")
+      .expect(404)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Resource Not Found");
+      });
+  });
+  it("400: responds with 'Bad Request' when failing schema validation", () => {
+    return request(app)
+      .get("/api/articles/notAValidId/comments")
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad Request");
+      });
   });
 });
