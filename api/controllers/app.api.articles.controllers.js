@@ -2,8 +2,8 @@ const {
   fetchArticles,
   fetchArticleById,
   updateArticleById,
-  checkArticleExists,
 } = require("../models/app.api.articles.models");
+const checkExists = require("../utils/check-exists");
 
 exports.getArticles = (req, res, next) => {
   fetchArticles()
@@ -25,11 +25,12 @@ exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
 
-  checkArticleExists(article_id)
-    .then(() => {
-      return updateArticleById(article_id, inc_votes);
-    })
-    .then((patchedArticle) => {
+  Promise.all([
+    updateArticleById(article_id, inc_votes),
+    checkExists("articles", "article_id", article_id),
+  ])
+    .then((resolvedPromises) => {
+      const patchedArticle = resolvedPromises[0];
       res.status(200).send({ patchedArticle });
     })
     .catch(next);
