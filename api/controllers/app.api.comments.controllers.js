@@ -1,8 +1,8 @@
 const { checkArticleExists } = require("../models/app.api.articles.models");
-const { checkUserExists} = require("../models/app.api.users.models")
+const { checkUserExists } = require("../models/app.api.users.models");
 const {
   fetchCommentsByArticleId,
-  insertCommentByArticleId
+  insertCommentByArticleId,
 } = require("../models/app.api.comments.models");
 
 exports.getCommentsByArticleId = (req, res, next) => {
@@ -18,15 +18,15 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.postCommentByArticleId = (req, res, next) => {
-    const { article_id } = req.params;
-    const { username, body} = req.body;
+  const { article_id } = req.params;
+  const { username, body } = req.body;
 
-    Promise.all([checkArticleExists(article_id), checkUserExists(username)
-    ])
+  Promise.all([checkArticleExists(article_id), checkUserExists(username)])
     .then(() => {
-    return insertCommentByArticleId(article_id, username, body)
+      return insertCommentByArticleId(article_id, username, body);
     })
-    .then((postedComment) =>{
-        res.status(201).send({postedComment})
-    }).catch(next)
+    .then((postedComment) => {
+      res.status(201).send({ postedComment });
+    })
+    .catch(next);
 };
