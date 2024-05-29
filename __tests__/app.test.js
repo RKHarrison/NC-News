@@ -176,7 +176,7 @@ describe.only("POST /api/articles/:article_id/comments", () => {
         });
       });
   });
-  it.only("400: malformed body/missing fields", () => {
+  it("400: malformed body/missing fields", () => {
     const newComment = {};
     return request(app)
       .post("/api/articles/3/comments")
@@ -187,7 +187,7 @@ describe.only("POST /api/articles/:article_id/comments", () => {
         expect(errorMsg).toBe("Bad Post Request");
       });
   });
-  it("400: responds 'Bad Request' when newComment object failing input schema validation ", () => {
+  it.only("400: responds 'Bad Request' when newComment object failing input schema validation ", () => {
     const newComment = { username: 987654321, body: "very nice" };
     return request(app)
       .post("/api/articles/3/comments")
@@ -195,7 +195,7 @@ describe.only("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("400 - Bad Request");
+        expect(errorMsg).toBe("Bad Post Request");
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing author", () => {
@@ -219,7 +219,7 @@ describe.only("POST /api/articles/:article_id/comments", () => {
         expect(errorMsg).toBe("Resource Not Found");
       });
   });
-  it("400: responds with 'Bad Request' when failing schema validation", () => {
+  it("400: responds with 'Bad Request' when failing article id schema validation", () => {
     return request(app)
       .get("/api/articles/notAValidId/comments")
       .expect(400)
