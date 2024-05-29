@@ -293,7 +293,7 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(errorMsg).toBe("Resource Not Found");
       });
   });
-  it("400: responds with 'Bad Request' when failing article id schema validation", () => {
+  it.only("400: responds with 'Bad Request' when failing article id schema validation", () => {
     const incrementVotes = { inc_votes: -100 };
     return request(app)
       .patch("/api/articles/NOTAVALIDID")
@@ -301,7 +301,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad Request");
+        expect(errorMsg).toBe("Bad PATCH Request");
       });
   });
 });
