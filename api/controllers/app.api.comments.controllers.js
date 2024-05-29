@@ -10,11 +10,13 @@ const {
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
 
-  checkArticleExists(article_id)
-    .then(() => {
-      fetchCommentsByArticleId(article_id).then((commentsForArticleId) => {
-        res.status(200).send({ commentsForArticleId });
-      });
+  Promise.all([
+    fetchCommentsByArticleId(article_id),
+    checkExists("articles", "article_id", article_id),
+  ])
+    .then((resolvedPromises) => {
+      const commentsForArticleId = resolvedPromises[0];
+      res.status(200).send({ commentsForArticleId });
     })
     .catch(next);
 };
