@@ -159,3 +159,22 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+  it('201: adds new comment for article by article id, and responds with posted comment object', () => {
+    const newComment = {username: "butter_bridge", body: "very nice"}
+    return require(app)
+    .post("/api/articles/3/comments")
+    .send(newCommentToPost)
+    .expect(201)
+    .then(({body}) =>{
+      postedComment = body.postedComment
+      expect(postedComment).toMatchObject({
+        article_id: 3,
+        comment_id: expect.any(Number),
+        body: "very nice",
+        author: "butter_bridge"
+      })
+    })
+  });
+});
