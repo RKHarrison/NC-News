@@ -85,7 +85,7 @@ describe("GET /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad Request");
+        expect(errorMsg).toBe("Bad GET Request");
       });
   });
 });
@@ -154,7 +154,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad Request");
+        expect(errorMsg).toBe("Bad GET Request");
       });
   });
 });
@@ -177,14 +177,14 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
   it("400: responds 'Bad Post Request' when newComment object has malformed body/missing fields", () => {
-    const newComment = {username: "butter_bridge"};
+    const newComment = { username: "butter_bridge" };
     return request(app)
       .post("/api/articles/3/comments")
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad Post Request");
+        expect(errorMsg).toBe("Bad POST Request");
       });
   });
   it("400: responds 'Bad Post Request' when newComment object failing input schema validation ", () => {
@@ -195,7 +195,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad Post Request");
+        expect(errorMsg).toBe("Bad POST Request");
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing author", () => {
@@ -226,7 +226,82 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad Request");
+        expect(errorMsg).toBe("Bad GET Request");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  it("200: updates article value by postive integer and responds with updated article object", () => {
+    const incomingVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incomingVotes)
+      .expect(200)
+      .then(({ body }) => {
+        const patchedArticle = body.patchedArticle;
+        expect(patchedArticle).toMatchObject({
+          article_id: 1,
+          votes: 101,
+        });
+      });
+  });
+  it("200: updates article value by negative integer and responds with updated article object", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incrementVotes)
+      .expect(200)
+      .then(({ body }) => {
+        const patchedArticle = body.patchedArticle;
+        expect(patchedArticle).toMatchObject({
+          article_id: 1,
+          votes: 0,
+        });
+      });
+  });
+  it("400: responds 'Bad Patch Request' when patch object has malformed body/missing fields", () => {
+    const incrementVotes = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad PATCH Request");
+      });
+  });
+  it("400: responds 'Bad Patch Request' when patch object failing input schema validation", () => {
+    const incrementVotes = { inc_votes: "INVALID_INPUT" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad PATCH Request");
+      });
+  });
+  it("404: responds 'Not Found' when given valid but non-existing article id", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/articles/987654321")
+      .send(incrementVotes)
+      .expect(404)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Resource Not Found");
+      });
+  });
+  it("400: responds with 'Bad Request' when failing article id schema validation", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/articles/NOTAVALIDID")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body }) => {
+        const errorMsg = body.msg;
+        expect(errorMsg).toBe("Bad PATCH Request");
       });
   });
 });
