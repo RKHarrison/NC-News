@@ -312,4 +312,20 @@ describe("DELETE /api/comments/:comment_id", () => {
     .delete("/api/comments/1")
     .expect(204)
   });
+  it("404: responds Not Found when given valid but non-exitsting comment", () => {
+    return request(app)
+      .delete("/api/comments/987654321")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Comment Not Found");
+      });
+  });
+  it("400: Returns Bad Request when given invalid comment id", () => {
+    return request(app)
+      .delete("/api/comments/NOT_AN_ID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad DELETE Request");
+      });
+  });
 });
