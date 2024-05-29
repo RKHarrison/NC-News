@@ -1,6 +1,7 @@
 const { checkArticleExists } = require("../models/app.api.articles.models");
 const {
   fetchCommentsByArticleId,
+  insertCommentByArticleId
 } = require("../models/app.api.comments.models");
 
 exports.getCommentsByArticleId = (req, res, next) => {
@@ -13,4 +14,14 @@ exports.getCommentsByArticleId = (req, res, next) => {
       });
     })
     .catch(next);
+};
+
+exports.postCommentByArticleId = (req, res, next) => {
+    const { article_id } = req.params;
+    const { username, body} = req.body
+
+      console.log(article_id);
+    insertCommentByArticleId(article_id, username, body).then((postedComment) =>{
+        res.status(201).send({postedComment})
+    })
 };

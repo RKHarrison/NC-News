@@ -160,12 +160,12 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe('POST /api/articles/:article_id/comments', () => {
+describe.only('POST /api/articles/:article_id/comments', () => {
   it('201: adds new comment for article by article id, and responds with posted comment object', () => {
     const newComment = {username: "butter_bridge", body: "very nice"}
-    return require(app)
+    return request(app)
     .post("/api/articles/3/comments")
-    .send(newCommentToPost)
+    .send(newComment)
     .expect(201)
     .then(({body}) =>{
       postedComment = body.postedComment
