@@ -124,7 +124,10 @@ describe("GET /api/articles", () => {
         expect(articles).toHaveLength(13);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
-          expect(article).not.toHaveProperty("body");
+          expect(article).not.toHaveProperty("body")
+          expect(article).toMatchObject({
+            comment_count:expect.any(Number)
+          });
         });
       });
   });
