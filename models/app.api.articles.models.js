@@ -1,7 +1,33 @@
 const db = require("../db/connection");
 const { all } = require("../app");
 
-exports.fetchArticles = (topic) => {
+exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
+  const allowedOrders = ["ASC", "DESC"];
+  const allowedSortBys = [
+    "comment_count",
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+  ];
+
+  if (
+    order &&
+    sort_by &&
+    !allowedOrders.includes(order) &&
+    !allowedSortBys.includes(sort_by)
+  ) {
+    return Promise.reject({ status: 400, msg: "Bad Query Request" });
+  }
+  if (order && !allowedOrders.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad Order Request" });
+  }
+  if (sort_by && !allowedSortBys.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad Sort Request" });
+  }
+
   const queryValues = [];
   let sqlQuery = `
     SELECT a.created_at, a.title, a.article_id, a.author, a.title, a.topic, a.votes, COUNT(comment_id)::INT AS comment_count 
@@ -14,7 +40,8 @@ exports.fetchArticles = (topic) => {
     queryValues.push(topic);
   }
 
-  sqlQuery += "GROUP BY a.article_id ORDER BY a.created_at DESC;";
+  sqlQuery += "GROUP BY a.article_id";
+  sqlQuery += ` ORDER BY a.${sort_by} ${order}`;
 
   return db.query(sqlQuery, queryValues).then((articles) => {
     return articles.rows;

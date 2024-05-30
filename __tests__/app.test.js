@@ -377,7 +377,7 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
     return request(app)
       .get("/api/articles?UNRECOGNISED_QUERY_COLUMN")
       .expect(200)
-      .then(({ body:{articles} }) => {
+      .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(13);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
@@ -389,7 +389,7 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
     return request(app)
       .get("/api/articles?topic=paper")
       .expect(200)
-      .then(({ body: {articles} }) => {
+      .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(0);
         expect(articles).toEqual([]);
       });
@@ -400,6 +400,60 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Resource Not Found");
+      });
+  });
+});
+
+describe("GET /api/articles?order=ASCE/DESCS&sort_by=any_column", () => {
+  it("200: sorts articles by default column, ascending", () => {
+    return request(app)
+      .get("/api/articles?order=ASC")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", { ascending: true });
+      });
+  });
+  it("200: sorts articles by any valid column, default descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("article_id", { descending: true });
+      });
+  });
+  it("200: sorts articles by a different valid column, ascending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=ASC")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("title", { ascending: true });
+      });
+  });
+  it("400: responds 'Bad Order Request' when given an unaccepted order term", () => {
+    return request(app)
+      .get("/api/articles?order=NOT_ALLOWED")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Order Request");
+      });
+  });
+  it("400: responds 'Bad Sort Request' when given an unaccepted order term", () => {
+    return request(app)
+      .get("/api/articles?sort_by=NOT_ALLOWED")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Sort Request");
+      });
+  });
+  it("400: responds 'Bad Query Request' when both query terms are unaccepted", () => {
+    return request(app)
+      .get("/api/articles?order=NOT_ALLOWED&sort_by=NOT_ALLOWED")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Query Request");
       });
   });
 });
