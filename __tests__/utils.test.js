@@ -1,4 +1,4 @@
-const checkExists = require("../api/utils/check-exists");
+const checkExists = require("../utils/check-exists");
 const db = require("../db/connection");
 const data = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
