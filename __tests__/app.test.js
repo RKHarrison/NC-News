@@ -307,10 +307,8 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
-  it('204 deletes the given comment by comment_id and responds with no content', () => {
-    return request(app)
-    .delete("/api/comments/1")
-    .expect(204)
+  it("204 deletes the given comment by comment_id and responds with no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
   });
   it("404: responds Not Found when given valid but non-exitsting comment", () => {
     return request(app)
@@ -326,6 +324,25 @@ describe("DELETE /api/comments/:comment_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad DELETE Request");
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  it("200: responds with array of all users with correct properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const users = body.users;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
       });
   });
 });
