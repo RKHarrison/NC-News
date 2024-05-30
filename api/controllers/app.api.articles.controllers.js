@@ -21,9 +21,8 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  const { count } = req.query;
 
-  fetchArticleById(article_id, count)
+  fetchArticleById(article_id)
     .then((article) => res.status(200).send({ article }))
     .catch(next);
 };

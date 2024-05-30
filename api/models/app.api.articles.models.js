@@ -1,4 +1,5 @@
 const db = require("../../db/connection");
+const { all } = require("../app");
 
 exports.fetchArticles = (topic) => {
   const queryValues = [];
@@ -20,21 +21,15 @@ exports.fetchArticles = (topic) => {
   });
 };
 
-exports.fetchArticleById = (article_id, count) => {
+exports.fetchArticleById = (article_id) => {
   const queryValues = [article_id];
-  let sqlQuery;
-
-  if (count && count === "comments") {
-    sqlQuery = `
+  const sqlQuery = `
   SELECT a.*, COUNT(c.comment_id)::INT AS comment_count 
   FROM articles a
   LEFT JOIN comments c ON c.article_id = a.article_id
   WHERE a.article_id = $1
   GROUP BY a.article_id;
   `;
-  } else {
-    sqlQuery = `SELECT * FROM articles WHERE article_id = $1;`;
-  }
 
   return db.query(sqlQuery, queryValues).then(({ rows }) => {
     const article = rows[0];
