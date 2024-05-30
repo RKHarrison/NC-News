@@ -346,3 +346,62 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET api/articles?filter_by=:filterTerm", () => {
+  it("200: responds with filtered articles", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const filteredArticles = body.articles;
+        expect(filteredArticles).toHaveLength(1);
+        expect(filteredArticles[0]).toMatchObject({
+          article_id: 5,
+          topic: "cats",
+        });
+      });
+  });
+  it("200: responds with filtered articles by a different filter term", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const filteredArticles = body.articles;
+        expect(filteredArticles).toHaveLength(12);
+        filteredArticles.forEach((article) => {
+          expect(article).toHaveProperty("topic", "mitch");
+        });
+      });
+  });
+  it("200: responds with default 'GET /api/articles' behvaiour if unrecognised query column", () => {
+    return request(app)
+      .get("/api/articles?UNRECOGNISED_QUERY_COLUMN")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body");
+        });
+      });
+  });
+  it("200: responds with empty array if no matching data for valid query", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const filteredArticles = body.articles;
+        expect(filteredArticles).toHaveLength(0);
+        expect(filteredArticles).toEqual([]);
+      });
+  });
+  it("404: responds Not Found array if no matching topic exists", () => {
+    return request(app)
+      .get("/api/articles?topic=NONEXISTENT")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Resource Not Found");
+      });
+  });
+});
