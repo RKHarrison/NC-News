@@ -13,8 +13,8 @@ exports.getCommentsByArticleId = (req, res, next) => {
     checkExists("articles", "article_id", article_id),
   ])
     .then((resolvedPromises) => {
-      const commentsForArticleId = resolvedPromises[0];
-      res.status(200).send({ commentsForArticleId });
+      const comments = resolvedPromises[0];
+      res.status(200).send({ comments });
     })
     .catch(next);
 };
