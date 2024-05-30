@@ -6,16 +6,14 @@ const {
 const checkExists = require("../utils/check-exists");
 
 exports.getArticles = (req, res, next) => {
+  const { topic } = req.query;
 
-  const {topic} = req.query
+  const promises = [fetchArticles(topic)];
+  if (topic) promises.push(checkExists("topics", "slug", topic));
 
-  const promises = [fetchArticles(topic)]
-  if (topic) promises.push( checkExists('topics', 'slug', topic))
-
-    
   Promise.all(promises)
     .then((resolvedPromises) => {
-      const articles = resolvedPromises[0]
+      const articles = resolvedPromises[0];
       res.status(200).send({ articles });
     })
     .catch(next);
@@ -23,8 +21,9 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
+  const { count } = req.query;
 
-  fetchArticleById(article_id)
+  fetchArticleById(article_id, count)
     .then((article) => res.status(200).send({ article }))
     .catch(next);
 };
