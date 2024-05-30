@@ -373,9 +373,9 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
         });
       });
   });
-  it("200: responds with default 'GET /api/articles' behvaiour if unrecognised query input", () => {
+  it("200: responds with default 'GET /api/articles' behvaiour if unrecognised query column", () => {
     return request(app)
-      .get("/api/articles?UNRECOGNISEDQUERY")
+      .get("/api/articles?UNRECOGNISED_QUERY_COLUMN")
       .expect(200)
       .then(({ body }) => {
         const articles = body.articles;
