@@ -405,3 +405,30 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id?comment_count", () => {
+  it("200: responds with an article matching article_id with a correct comment_count colum", () => {
+    return request(app)
+      .get("/api/articles/1?count=comments")
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article).toMatchObject({
+          comment_count: 11,
+          article_id: 1,
+        });
+      });
+  });
+  it("200: respond with a 0 comment_count for article with no comments", () => {
+    return request(app)
+      .get("/api/articles/4?count=comments")
+      .expect(200)
+      .then(({ body }) => {
+        const article = body.article;
+        expect(article).toMatchObject({
+          comment_count: 0,
+          article_id: 4,
+        });
+      });
+  });
+});
