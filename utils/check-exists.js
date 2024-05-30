@@ -1,5 +1,5 @@
 const format = require('pg-format')
-const db = require('../../db/connection')
+const db = require('../db/connection')
 
 checkExists = async (table, column, value) => {
     const sqlQuery = format('SELECT * FROM %I WHERE %I = $1;', table, column)

@@ -1,4 +1,4 @@
-const db = require("../../db/connection");
+const db = require("../db/connection");
 
 exports.fetchCommentsByArticleId = (article_id) => {
   const queryValues = [article_id];

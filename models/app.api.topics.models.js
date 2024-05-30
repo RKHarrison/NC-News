@@ -1,4 +1,4 @@
-const db = require("../../db/connection");
+const db = require("../db/connection");
 
 exports.fetchTopics = () => {
   const sqlQuery = "SELECT * FROM topics";
