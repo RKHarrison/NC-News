@@ -1,7 +1,7 @@
 const db = require("../../db/connection");
+const { all } = require("../app");
 
 exports.fetchArticles = (topic) => {
-
   const queryValues = [];
   let sqlQuery = `
     SELECT a.created_at, a.title, a.article_id, a.author, a.title, a.topic, a.votes, COUNT(comment_id) AS comment_count 
@@ -16,7 +16,6 @@ exports.fetchArticles = (topic) => {
 
   sqlQuery += "GROUP BY a.article_id ORDER BY a.created_at DESC;";
 
-  
   return db.query(sqlQuery, queryValues).then((articles) => {
     return articles.rows;
   });
@@ -24,11 +23,13 @@ exports.fetchArticles = (topic) => {
 
 exports.fetchArticleById = (article_id) => {
   const queryValues = [article_id];
-
   const sqlQuery = `
-    SELECT * FROM articles
-    WHERE article_id = $1 
-    `;
+  SELECT a.*, COUNT(c.comment_id)::INT AS comment_count 
+  FROM articles a
+  LEFT JOIN comments c ON c.article_id = a.article_id
+  WHERE a.article_id = $1
+  GROUP BY a.article_id;
+  `;
 
   return db.query(sqlQuery, queryValues).then(({ rows }) => {
     const article = rows[0];

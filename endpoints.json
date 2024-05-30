@@ -31,6 +31,7 @@
     "queries": [],
     "exampleResponse": {
       "article": {
+        "comment_count" : 11,
         "article_id": 1,
         "title": "Living in the shadow of a great man",
         "topic": "mitch",
