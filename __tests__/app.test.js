@@ -347,7 +347,7 @@ describe("GET /api/users", () => {
   });
 });
 
-describe.only("GET api/articles?filter_by=:filterTerm", () => {
+describe("GET api/articles?filter_by=:filterTerm", () => {
   it("200: responds with filtered articles", () => {
     return request(app)
       .get("/api/articles?topic=cats")
