@@ -437,7 +437,7 @@ describe("GET /api/articles?order=ASCE/DESCS&sort_by=any_column", () => {
       .get("/api/articles?order=NOT_ALLOWED")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe('Bad Order Request');
+        expect(msg).toBe("Bad Order Request");
       });
   });
   it("400: responds 'Bad Sort Request' when given an unaccepted order term", () => {
@@ -445,7 +445,7 @@ describe("GET /api/articles?order=ASCE/DESCS&sort_by=any_column", () => {
       .get("/api/articles?sort_by=NOT_ALLOWED")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe('Bad Sort Request');
+        expect(msg).toBe("Bad Sort Request");
       });
   });
   it("400: responds 'Bad Query Request' when both query terms are unaccepted", () => {
@@ -453,7 +453,7 @@ describe("GET /api/articles?order=ASCE/DESCS&sort_by=any_column", () => {
       .get("/api/articles?order=NOT_ALLOWED&sort_by=NOT_ALLOWED")
       .expect(400)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe('Bad Query Request');
+        expect(msg).toBe("Bad Query Request");
       });
   });
 });

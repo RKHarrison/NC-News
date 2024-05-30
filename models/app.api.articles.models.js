@@ -13,8 +13,13 @@ exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
     "votes",
   ];
 
-  if (order && sort_by && !allowedOrders.includes(order) && !allowedSortBys.includes(sort_by)) {
-    return Promise.reject({ status : 400, msg: "Bad Query Request"})
+  if (
+    order &&
+    sort_by &&
+    !allowedOrders.includes(order) &&
+    !allowedSortBys.includes(sort_by)
+  ) {
+    return Promise.reject({ status: 400, msg: "Bad Query Request" });
   }
   if (order && !allowedOrders.includes(order)) {
     return Promise.reject({ status: 400, msg: "Bad Order Request" });
