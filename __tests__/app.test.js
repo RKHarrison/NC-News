@@ -17,8 +17,7 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
-      .then(({ body }) => {
-        const topics = body.topics;
+      .then(({ body: { topics } }) => {
         expect(topics).toHaveLength(3);
         topics.forEach((topic) => {
           expect(topic).toMatchObject({
@@ -32,9 +31,8 @@ describe("GET /api/topics", () => {
     return request(app)
       .get("/api/UNDEFINED")
       .expect(404)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Route Not Found");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Route Not Found");
       });
   });
 });
@@ -56,8 +54,7 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
-      .then(({ body }) => {
-        const article = body.article;
+      .then(({ body: { article } }) => {
         expect(article).toMatchObject({
           article_id: 1,
           author: "butter_bridge",
@@ -74,8 +71,7 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/1?count=comments")
       .expect(200)
-      .then(({ body }) => {
-        const article = body.article;
+      .then(({ body: { article } }) => {
         expect(article).toMatchObject({
           comment_count: 11,
           article_id: 1,
@@ -86,8 +82,7 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/4?count=comments")
       .expect(200)
-      .then(({ body }) => {
-        const article = body.article;
+      .then(({ body: { article } }) => {
         expect(article).toMatchObject({
           comment_count: 0,
           article_id: 4,
@@ -98,18 +93,16 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/987654321")
       .expect(404)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Resource Not Found");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource Not Found");
       });
   });
   it("400: responds with 'Bad Request' when failing schema validation", () => {
     return request(app)
       .get("/api/articles/notAValidId")
       .expect(400)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad GET Request");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request");
       });
   });
 });
@@ -119,14 +112,13 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then(({ body }) => {
-        const articles = body.articles;
+      .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(13);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
-          expect(article).not.toHaveProperty("body")
+          expect(article).not.toHaveProperty("body");
           expect(article).toMatchObject({
-            comment_count:expect.any(Number)
+            comment_count: expect.any(Number),
           });
         });
       });
@@ -138,13 +130,12 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
-      .then(({ body }) => {
-        const commentsForArticleId = body.commentsForArticleId;
-        expect(commentsForArticleId).toHaveLength(11);
-        expect(commentsForArticleId).toBeSortedBy("created_at", {
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(11);
+        expect(comments).toBeSortedBy("created_at", {
           descending: true,
         });
-        commentsForArticleId.forEach((comment) => {
+        comments.forEach((comment) => {
           expect(comment).toMatchObject({
             article_id: 1,
             body: expect.any(String),
@@ -160,28 +151,25 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api/articles/2/comments")
       .expect(200)
-      .then(({ body }) => {
-        const commentsForArticleId = body.commentsForArticleId;
-        expect(commentsForArticleId).toHaveLength(0);
-        expect(commentsForArticleId).toBeInstanceOf(Array);
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(0);
+        expect(comments).toBeInstanceOf(Array);
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing article id", () => {
     return request(app)
       .get("/api/articles/987654321/comments")
       .expect(404)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Resource Not Found");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource Not Found");
       });
   });
   it("400: responds with 'Bad Request' when failing schema validation", () => {
     return request(app)
       .get("/api/articles/notAValidId/comments")
       .expect(400)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad GET Request");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request");
       });
   });
 });
@@ -193,8 +181,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .post("/api/articles/3/comments")
       .send(newComment)
       .expect(201)
-      .then(({ body }) => {
-        postedComment = body.postedComment;
+      .then(({ body: { postedComment } }) => {
         expect(postedComment).toMatchObject({
           article_id: 3,
           comment_id: expect.any(Number),
@@ -209,9 +196,8 @@ describe("POST /api/articles/:article_id/comments", () => {
       .post("/api/articles/3/comments")
       .send(newComment)
       .expect(400)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad POST Request");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
       });
   });
   it("400: responds 'Bad Post Request' when newComment object failing input schema validation ", () => {
@@ -220,9 +206,8 @@ describe("POST /api/articles/:article_id/comments", () => {
       .post("/api/articles/3/comments")
       .send(newComment)
       .expect(400)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad POST Request");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing author", () => {
@@ -231,9 +216,8 @@ describe("POST /api/articles/:article_id/comments", () => {
       .post("/api/articles/3/comments")
       .send(newComment)
       .expect(404)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Resource Not Found");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource Not Found");
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing article id", () => {
@@ -242,18 +226,16 @@ describe("POST /api/articles/:article_id/comments", () => {
       .post("/api/articles/987654321/comments")
       .expect(404)
       .send(newComment)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Resource Not Found");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource Not Found");
       });
   });
   it("400: responds with 'Bad Request' when failing article id schema validation", () => {
     return request(app)
       .get("/api/articles/notAValidId/comments")
       .expect(400)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad GET Request");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request");
       });
   });
 });
@@ -265,8 +247,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1")
       .send(incomingVotes)
       .expect(200)
-      .then(({ body }) => {
-        const patchedArticle = body.patchedArticle;
+      .then(({ body: { patchedArticle } }) => {
         expect(patchedArticle).toMatchObject({
           article_id: 1,
           votes: 101,
@@ -279,8 +260,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1")
       .send(incrementVotes)
       .expect(200)
-      .then(({ body }) => {
-        const patchedArticle = body.patchedArticle;
+      .then(({ body: { patchedArticle } }) => {
         expect(patchedArticle).toMatchObject({
           article_id: 1,
           votes: 0,
@@ -293,9 +273,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1")
       .send(incrementVotes)
       .expect(400)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad PATCH Request");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad PATCH Request");
       });
   });
   it("400: responds 'Bad Patch Request' when patch object failing input schema validation", () => {
@@ -304,9 +283,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/1")
       .send(incrementVotes)
       .expect(400)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad PATCH Request");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad PATCH Request");
       });
   });
   it("404: responds 'Not Found' when given valid but non-existing article id", () => {
@@ -315,9 +293,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/987654321")
       .send(incrementVotes)
       .expect(404)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Resource Not Found");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource Not Found");
       });
   });
   it("400: responds with 'Bad Request' when failing article id schema validation", () => {
@@ -326,9 +303,8 @@ describe("PATCH /api/articles/:article_id", () => {
       .patch("/api/articles/NOTAVALIDID")
       .send(incrementVotes)
       .expect(400)
-      .then(({ body }) => {
-        const errorMsg = body.msg;
-        expect(errorMsg).toBe("Bad PATCH Request");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad PATCH Request");
       });
   });
 });
@@ -360,8 +336,7 @@ describe("GET /api/users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
-      .then(({ body }) => {
-        const users = body.users;
+      .then(({ body: { users } }) => {
         expect(users).toHaveLength(4);
         users.forEach((user) => {
           expect(user).toMatchObject({
@@ -379,10 +354,9 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
     return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
-      .then(({ body }) => {
-        const filteredArticles = body.articles;
-        expect(filteredArticles).toHaveLength(1);
-        expect(filteredArticles[0]).toMatchObject({
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(1);
+        expect(articles[0]).toMatchObject({
           article_id: 5,
           topic: "cats",
         });
@@ -392,10 +366,9 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
-      .then(({ body }) => {
-        const filteredArticles = body.articles;
-        expect(filteredArticles).toHaveLength(12);
-        filteredArticles.forEach((article) => {
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
           expect(article).toHaveProperty("topic", "mitch");
         });
       });
@@ -404,8 +377,7 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
     return request(app)
       .get("/api/articles?UNRECOGNISED_QUERY_COLUMN")
       .expect(200)
-      .then(({ body }) => {
-        const articles = body.articles;
+      .then(({ body:{articles} }) => {
         expect(articles).toHaveLength(13);
         expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
@@ -417,10 +389,9 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
     return request(app)
       .get("/api/articles?topic=paper")
       .expect(200)
-      .then(({ body }) => {
-        const filteredArticles = body.articles;
-        expect(filteredArticles).toHaveLength(0);
-        expect(filteredArticles).toEqual([]);
+      .then(({ body: {articles} }) => {
+        expect(articles).toHaveLength(0);
+        expect(articles).toEqual([]);
       });
   });
   it("404: responds Not Found array if no matching topic exists", () => {
