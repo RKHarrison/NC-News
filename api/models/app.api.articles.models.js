@@ -4,7 +4,6 @@ exports.fetchArticles = () =>{
     const sqlQuery = `
 SELECT  a.created_at, 
         a.title,
-        a.created_at, 
         a.article_id, 
         a.author, 
         a.title, 
@@ -13,7 +12,7 @@ SELECT  a.created_at,
         COUNT(comment_id) AS comment_count
 FROM articles a
 LEFT JOIN comments c ON a.article_id = c.article_id
-GROUP BY a.title, a.created_at, a.article_id, a.author, a.title, a.topic, a.votes
+GROUP BY a.article_id
 ORDER BY a.created_at DESC;
 `
 

@@ -307,10 +307,8 @@ describe("PATCH /api/articles/:article_id", () => {
 });
 
 describe("DELETE /api/comments/:comment_id", () => {
-  it('204 deletes the given comment by comment_id and responds with no content', () => {
-    return request(app)
-    .delete("/api/comments/1")
-    .expect(204)
+  it("204 deletes the given comment by comment_id and responds with no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
   });
   it("404: responds Not Found when given valid but non-exitsting comment", () => {
     return request(app)
@@ -329,3 +327,50 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  it("200: responds with array of all users with correct properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const users = body.users;
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+});
+
+describe.only("GET api/articles?filter_by=:filterTerm", () => {
+  it("200: responds with filtered articles", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const filteredArticles = body.articles;
+        expect(filteredArticles).toHaveLength(1);
+        expect(filteredArticles[0]).toMatchObject({
+          article_id: 5,
+          topic: 'cats',
+        });
+      });
+  });
+  it("200: responds with filtered articles by a different filter term", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const filteredArticles = body.articles;
+        expect(filteredArticles).toHaveLength(12);
+        filteredArticles.forEach((article) => {
+          expect(article).toHaveProperty("topic", "mitch");
+        });
+      });
+  });
+})
