@@ -1,13 +1,27 @@
 const db = require("../db/connection");
 const { all } = require("../app");
 
+exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
+  const allowedOrders = ["ASC", "DESC"];
+  const allowedSortBys = [
+    "comment_count",
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "created_at",
+    "votes",
+  ];
 
-
-exports.fetchArticles = (topic, order = 'DESC', sort_by = 'a.created_at') => {
-
-  const allowedOrders = ['ASC', 'DESC']
-
-
+  if (order && sort_by && !allowedOrders.includes(order) && !allowedSortBys.includes(sort_by)) {
+    return Promise.reject({ status : 400, msg: "Bad Query Request"})
+  }
+  if (order && !allowedOrders.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad Order Request" });
+  }
+  if (sort_by && !allowedSortBys.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad Sort Request" });
+  }
 
   const queryValues = [];
   let sqlQuery = `
@@ -22,39 +36,12 @@ exports.fetchArticles = (topic, order = 'DESC', sort_by = 'a.created_at') => {
   }
 
   sqlQuery += "GROUP BY a.article_id";
-  sqlQuery += ` ORDER BY ${sort_by} ${order}`;
-  
+  sqlQuery += ` ORDER BY a.${sort_by} ${order}`;
 
   return db.query(sqlQuery, queryValues).then((articles) => {
     return articles.rows;
   });
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 exports.fetchArticleById = (article_id) => {
   const queryValues = [article_id];
