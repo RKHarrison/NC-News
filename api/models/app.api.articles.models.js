@@ -4,7 +4,7 @@ const { all } = require("../app");
 exports.fetchArticles = (topic) => {
   const queryValues = [];
   let sqlQuery = `
-    SELECT a.created_at, a.title, a.article_id, a.author, a.title, a.topic, a.votes, COUNT(comment_id) AS comment_count 
+    SELECT a.created_at, a.title, a.article_id, a.author, a.title, a.topic, a.votes, COUNT(comment_id)::INT AS comment_count 
     FROM articles a 
     LEFT JOIN comments c ON a.article_id = c.article_id 
   `;
