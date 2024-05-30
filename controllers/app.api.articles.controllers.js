@@ -6,9 +6,10 @@ const {
 const checkExists = require("../utils/check-exists");
 
 exports.getArticles = (req, res, next) => {
-  const { topic } = req.query;
+  const { topic, order, sort_by } = req.query;
 
-  const promises = [fetchArticles(topic)];
+
+  const promises = [fetchArticles(topic, order, sort_by)];
   if (topic) promises.push(checkExists("topics", "slug", topic));
 
   Promise.all(promises)

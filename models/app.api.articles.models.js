@@ -1,7 +1,14 @@
 const db = require("../db/connection");
 const { all } = require("../app");
 
-exports.fetchArticles = (topic) => {
+
+
+exports.fetchArticles = (topic, order = 'DESC', sort_by = 'a.created_at') => {
+
+  const allowedOrders = ['ASC', 'DESC']
+
+
+
   const queryValues = [];
   let sqlQuery = `
     SELECT a.created_at, a.title, a.article_id, a.author, a.title, a.topic, a.votes, COUNT(comment_id)::INT AS comment_count 
@@ -14,12 +21,40 @@ exports.fetchArticles = (topic) => {
     queryValues.push(topic);
   }
 
-  sqlQuery += "GROUP BY a.article_id ORDER BY a.created_at DESC;";
+  sqlQuery += "GROUP BY a.article_id";
+  sqlQuery += ` ORDER BY ${sort_by} ${order}`;
+  
 
   return db.query(sqlQuery, queryValues).then((articles) => {
     return articles.rows;
   });
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 exports.fetchArticleById = (article_id) => {
   const queryValues = [article_id];

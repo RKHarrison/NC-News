@@ -4,7 +4,6 @@ const db = require("../db/connection");
 const data = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const endpointsJsonFile = require("../endpoints.json");
-const { describe } = require("node:test");
 
 beforeEach(() => {
   return seed(data);
@@ -405,7 +404,7 @@ describe("GET api/articles?filter_by=:filterTerm", () => {
   });
 });
 
-describe("GET /ap/articles?order=ASCE/DESCS&sort_by=any_column", () => {
+describe("GET /api/articles?order=ASCE/DESCS&sort_by=any_column", () => {
   it('"200: sorts articles by default column, ascending', () => {
     return request(app)
       .get("/api/articles?order=ASC")
@@ -415,9 +414,9 @@ describe("GET /ap/articles?order=ASCE/DESCS&sort_by=any_column", () => {
         expect(articles).toBeSortedBy("created_at", { ascending: true });
       });
   });
-  it('"200: sorts articles by any valid column', () => {
+  it('"200: sorts articles by any valid column, default descending', () => {
     return request(app)
-      .get("/api/articles?sort_by=article_id, default descending")
+      .get("/api/articles?sort_by=article_id")
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(13);
