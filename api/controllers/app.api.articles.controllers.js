@@ -9,8 +9,13 @@ exports.getArticles = (req, res, next) => {
 
   const {topic} = req.query
 
-  fetchArticles(topic)
-    .then((articles) => {
+  const promises = [fetchArticles(topic)]
+  if (topic) promises.push( checkExists('topics', 'slug', topic))
+
+    
+  Promise.all(promises)
+    .then((resolvedPromises) => {
+      const articles = resolvedPromises[0]
       res.status(200).send({ articles });
     })
     .catch(next);
