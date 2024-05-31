@@ -6,11 +6,11 @@ exports.fetchCommentsByArticleId = (article_id, limit, p) => {
         WHERE article_id = $1
         ORDER BY created_at DESC`;
   if (limit) {
-    sqlQuery += ` LIMIT $${queryValues.length + 1}`;
+    sqlQuery += ` LIMIT $2`;
     queryValues.push(limit);
   }
   if (p) {
-    sqlQuery += ` OFFSET $${queryValues.length+1}`
+    sqlQuery += ` OFFSET $3`
     queryValues.push(p)
   }
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows);

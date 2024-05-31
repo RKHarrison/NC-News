@@ -1,23 +1,34 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.insertArticle = (author, title, body, topic, article_img_url) => {
+  let queryColumns = "author, title, body, topic";
   const queryValues = [author, title, body, topic];
 
-  let sqlQuery = `
-    INSERT INTO articles
-    (author, title, body, topic`;
-
   if (article_img_url) {
+    queryColumns += ", article_img_url";
     queryValues.push(article_img_url);
-    sqlQuery += `, article_img_url) VALUES ($1 ,$2, $3, $4, $5) RETURNING *`;
-  } else {
-    sqlQuery += `) VALUES ($1 ,$2, $3, $4) RETURNING *`;
   }
 
-  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
+  let formattedSqlQuery = format(
+    `INSERT INTO articles
+    (${queryColumns})
+    VALUES
+    (%L) 
+    RETURNING *;`,
+    queryValues
+  );
+
+  return db.query(formattedSqlQuery).then(({ rows }) => rows[0]);
 };
 
-exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at", limit, p) => {
+exports.fetchArticles = (
+  topic,
+  order = "DESC",
+  sort_by = "created_at",
+  limit,
+  p
+) => {
   const allowedOrders = ["ASC", "DESC"];
   const allowedSortBys = [
     "comment_count",
@@ -44,31 +55,26 @@ exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at", limit, p
     return Promise.reject({ status: 400, msg: "Bad Sort Request" });
   }
 
-  const queryValues = [];
   let sqlQuery = `
     SELECT a.created_at, a.title, a.article_id, a.author, a.title, a.topic, a.votes, COUNT(comment_id)::INT AS comment_count 
     FROM articles a 
-    LEFT JOIN comments c ON a.article_id = c.article_id 
-  `;
+    LEFT JOIN comments c 
+    ON a.article_id = c.article_id `;
 
   if (topic) {
-    sqlQuery += `WHERE a.topic = $${queryValues.length+1} `;
-    queryValues.push(topic);
+    sqlQuery += format(`WHERE a.topic = %L `, topic);
   }
-
-  sqlQuery += "GROUP BY a.article_id";
-  sqlQuery += ` ORDER BY a.${sort_by} ${order}`;
+  sqlQuery += format("GROUP BY a.article_id ORDER BY a.%I %s ", sort_by, order);
 
   if (limit) {
-    sqlQuery += ` LIMIT $${queryValues.length+1}`
-    queryValues.push(limit)
+    sqlQuery += format(`LIMIT %L `, limit);
   }
   if (p) {
-    sqlQuery += ` OFFSET $${queryValues.length+1}`
-    queryValues.push(p)
+    sqlQuery += format(`OFFSET %L `, p);
   }
-  
-  return db.query(sqlQuery, queryValues).then((articles) => articles.rows);
+  sqlQuery += ";";
+
+  return db.query(sqlQuery).then((articles) => articles.rows);
 };
 
 exports.fetchArticleById = (article_id) => {
