@@ -1,5 +1,4 @@
 const db = require("../db/connection");
-const { all } = require("../app");
 
 exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
   const allowedOrders = ["ASC", "DESC"];
