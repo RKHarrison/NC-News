@@ -12,8 +12,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     fetchCommentsByArticleId(article_id),
     checkExists("articles", "article_id", article_id)
   ])
-    .then((resolvedPromises) => {
-      const comments = resolvedPromises[0];
+    .then(([comments]) => {
       res.status(200).send({ comments });
     })
     .catch(next);

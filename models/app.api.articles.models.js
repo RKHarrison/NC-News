@@ -43,9 +43,7 @@ exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
   sqlQuery += "GROUP BY a.article_id";
   sqlQuery += ` ORDER BY a.${sort_by} ${order}`;
 
-  return db.query(sqlQuery, queryValues).then((articles) => {
-    return articles.rows;
-  });
+  return db.query(sqlQuery, queryValues).then((articles) => articles.rows);
 };
 
 exports.fetchArticleById = (article_id) => {

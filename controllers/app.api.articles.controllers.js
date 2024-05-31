@@ -12,8 +12,7 @@ exports.getArticles = (req, res, next) => {
   if (topic) promises.push(checkExists("topics", "slug", topic));
 
   Promise.all(promises)
-    .then((resolvedPromises) => {
-      const articles = resolvedPromises[0];
+    .then(([articles]) => {
       res.status(200).send({ articles });
     })
     .catch(next);
@@ -38,8 +37,7 @@ exports.patchArticleById = (req, res, next) => {
     updateArticleById(article_id, inc_votes),
     checkExists("articles", "article_id", article_id),
   ])
-    .then((resolvedPromises) => {
-      const patchedArticle = resolvedPromises[0];
+    .then(([patchedArticle]) => {
       res.status(200).send({ patchedArticle });
     })
     .catch(next);
