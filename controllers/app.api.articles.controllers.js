@@ -8,7 +8,6 @@ const checkExists = require("../utils/check-exists");
 exports.getArticles = (req, res, next) => {
   const { topic, order, sort_by } = req.query;
 
-
   const promises = [fetchArticles(topic, order, sort_by)];
   if (topic) promises.push(checkExists("topics", "slug", topic));
 
@@ -23,8 +22,11 @@ exports.getArticles = (req, res, next) => {
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
 
-  fetchArticleById(article_id)
-    .then((article) => res.status(200).send({ article }))
+  Promise.all([
+    fetchArticleById(article_id),
+    checkExists("articles", "article_id", article_id),
+  ])
+    .then(([article]) => res.status(200).send({ article }))
     .catch(next);
 };
 

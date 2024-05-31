@@ -58,14 +58,7 @@ exports.fetchArticleById = (article_id) => {
   GROUP BY a.article_id;
   `;
 
-  return db.query(sqlQuery, queryValues).then(({ rows }) => {
-    const article = rows[0];
-
-    if (!article) {
-      return Promise.reject({ status: 404, msg: "Resource Not Found" });
-    }
-    return article;
-  });
+  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0])
 };
 
 exports.updateArticleById = (article_id, inc_votes) => {
