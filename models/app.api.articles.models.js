@@ -10,8 +10,10 @@ exports.insertArticle = (author, title, body, topic, article_img_url) => {
     queryValues.push(article_img_url);
     sqlQuery += `, article_img_url`;
   }
+
   sqlQuery += `) VALUES ($1 ,$2, $3, $4`;
   if (article_img_url) sqlQuery += `, $5`;
+
   sqlQuery += `) RETURNING *`;
 
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
