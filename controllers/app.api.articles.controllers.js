@@ -7,7 +7,7 @@ const {
 const checkExists = require("../utils/check-exists");
 
 exports.postArticle = (req, res, next) => {
-  const {author, title, body, topic} = req.body
+  const { author, title, body, topic } = req.body;
 
   Promise.all([
     checkExists("topics", "slug", topic),
@@ -16,24 +16,14 @@ exports.postArticle = (req, res, next) => {
     .then(() => {
       return insertArticle(author, title, body, topic);
     })
-    .then(({article_id}) => {
-      return fetchArticleById(article_id)
-    }).then(postedArticle => {
+    .then(({ article_id }) => {
+      return fetchArticleById(article_id);
+    })
+    .then((postedArticle) => {
       res.status(201).send({ postedArticle });
     })
     .catch(next);
-}
-
-
-
-
-
-
-
-
-
-
-
+};
 
 exports.getArticles = (req, res, next) => {
   const { topic, order, sort_by } = req.query;
