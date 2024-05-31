@@ -703,4 +703,14 @@ describe("GET /api/articles?limit=NUM&p=NUM", () => {
         expect(articles[0]).toHaveProperty("article_id", 5);
       });
   });
+  it("200: accepts a limit, offset AND order AND sort_by, returns correct number of sorted results from offset", () => {
+    return request(app)
+      .get("/api/articles?limit=2&p=1&sort_by=article_id&order=ASC")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("article_id", { ascending: true });
+        expect(articles).toHaveLength(2);
+        expect(articles[0]).toHaveProperty("article_id", 2);
+      });
+  });
 });
