@@ -6,14 +6,13 @@ exports.insertArticle = (author, title, body, topic, article_img_url) => {
   let sqlQuery = `
     INSERT INTO articles
     (author, title, body, topic`;
+
   if (article_img_url) {
     queryValues.push(article_img_url);
-    sqlQuery += `, article_img_url`;
+    sqlQuery += `, article_img_url) VALUES ($1 ,$2, $3, $4, $5) RETURNING *`;
+  } else {
+    sqlQuery += `) VALUES ($1 ,$2, $3, $4) RETURNING *`;
   }
-  sqlQuery += `) VALUES ($1 ,$2, $3, $4`;
-  if (article_img_url) sqlQuery += `, $5`;
-
-  sqlQuery += `) RETURNING *`;
 
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
 };
