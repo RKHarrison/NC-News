@@ -1,15 +1,19 @@
 const db = require("../db/connection");
 
-exports.insertArticle = (author, title, body, topic) => {
+exports.insertArticle = (author, title, body, topic, article_img_url) => {
   const queryValues = [author, title, body, topic];
-  console.log(queryValues);
-  const sqlQuery = `
+
+  let sqlQuery = `
     INSERT INTO articles
-    (author, title, body, topic)
-    VALUES
-    ($1 ,$2, $3, $4)
-    RETURNING *
-    `;
+    (author, title, body, topic`;
+  if (article_img_url) {
+    queryValues.push(article_img_url);
+    sqlQuery += `, article_img_url`;
+  }
+  sqlQuery += `) VALUES ($1 ,$2, $3, $4`;
+  if (article_img_url) sqlQuery += `, $5`;
+  sqlQuery += `) RETURNING *`;
+
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
 };
 
@@ -51,7 +55,7 @@ exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
     sqlQuery += "WHERE a.topic = $1 ";
     queryValues.push(topic);
   }
-  
+
   sqlQuery += "GROUP BY a.article_id";
   sqlQuery += ` ORDER BY a.${sort_by} ${order}`;
 
@@ -68,7 +72,7 @@ exports.fetchArticleById = (article_id) => {
   GROUP BY a.article_id;
   `;
 
-  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0])
+  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
 };
 
 exports.updateArticleById = (article_id, inc_votes) => {

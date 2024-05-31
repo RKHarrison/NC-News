@@ -7,14 +7,14 @@ const {
 const checkExists = require("../utils/check-exists");
 
 exports.postArticle = (req, res, next) => {
-  const { author, title, body, topic } = req.body;
+  const { author, title, body, topic, article_img_url } = req.body;
 
   Promise.all([
     checkExists("topics", "slug", topic),
     checkExists("users", "username", author),
   ])
     .then(() => {
-      return insertArticle(author, title, body, topic);
+      return insertArticle(author, title, body, topic, article_img_url);
     })
     .then(({ article_id }) => {
       return fetchArticleById(article_id);
