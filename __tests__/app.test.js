@@ -572,3 +572,88 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 })
+
+describe("POST /api/articles/", () => {
+  it("201: adds new article WITHOUT optional value and responds posted comment object", () => {
+    const newArticle = { author: "butter_bridge", title: "This is...", body: "...very nice", topic: "cats"};
+    return request(app)
+      .post("/api/articles/")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body: { postedArticle } }) => {
+        expect(postedArticle).toMatchObject({
+          comment_count: 0,
+          article_id: expect.any(Number),
+          created_at: expect.any(String),
+          votes: 0,
+          article_img_url: 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700',
+          author: "butter_bridge",
+          title: "This is...",
+          body: "...very nice",
+          topic: "cats",
+        });
+      });
+  }); 
+  it("201: adds new article WITH optional value and responds with posted comment object", () => {
+    const newArticle = { article_img_url: "http://NEWURL", author: "butter_bridge", title: "This is...", body: "...very nice", topic: "cats"};
+    return request(app)
+      .post("/api/articles/")
+      .send(newArticle)
+      .expect(201)
+      .then(({ body: { postedArticle } }) => {
+        expect(postedArticle).toMatchObject({
+          comment_count: 0,
+          article_id: expect.any(Number),
+          created_at: expect.any(String),
+          votes: 0,
+          article_img_url: 'http://NEWURL',
+          author: "butter_bridge",
+          title: "This is...",
+          body: "...very nice",
+          topic: "cats",
+        });
+      });
+  }); 
+  it("400: responds 'Bad Post Request' when new object has malformed body/missing fields", () => {
+    const newArticle = { author: "butter_bridge", topic: "cats"};
+    return request(app)
+      .post("/api/articles/")
+      .send(newArticle)
+      .expect(400)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
+      });
+  });
+  it("400: responds 'Bad Post Request' when new object failing input schema validation ", () => {
+    const newArticle = { author: "butter_bridge", title: null, body: null, topic: "cats"};
+    return request(app)
+      .post("/api/articles/")
+      .send(newArticle)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
+      });
+  });
+  it("404: responds 'Not Found' when given valid but non-existing author", () => {
+    const newArticle = { author: "NOT_FOUND", title: "This is...", body: "...very nice", topic: "cats"};
+    return request(app)
+      .post("/api/articles/")
+      .send(newArticle)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource Not Found");
+      });
+  });
+  it("404: responds 'Not Found' when given valid but non-existing topic", () => {
+    const newArticle = { author: "butter_bridge", title: "This is...", body: "...very nice", topic: "NOT_FOUND"};
+    return request(app)
+      .post("/api/articles/")
+      .expect(404)
+      .send(newArticle)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource Not Found");
+      });
+  });
+
+})

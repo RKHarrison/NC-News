@@ -1,5 +1,22 @@
 const db = require("../db/connection");
-const { all } = require("../app");
+
+exports.insertArticle = (author, title, body, topic, article_img_url) => {
+  const queryValues = [author, title, body, topic];
+
+  let sqlQuery = `
+    INSERT INTO articles
+    (author, title, body, topic`;
+  if (article_img_url) {
+    queryValues.push(article_img_url);
+    sqlQuery += `, article_img_url`;
+  }
+  sqlQuery += `) VALUES ($1 ,$2, $3, $4`;
+  if (article_img_url) sqlQuery += `, $5`;
+
+  sqlQuery += `) RETURNING *`;
+
+  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
+};
 
 exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
   const allowedOrders = ["ASC", "DESC"];
@@ -56,7 +73,7 @@ exports.fetchArticleById = (article_id) => {
   GROUP BY a.article_id;
   `;
 
-  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0])
+  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
 };
 
 exports.updateArticleById = (article_id, inc_votes) => {
