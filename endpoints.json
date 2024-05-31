@@ -31,7 +31,7 @@
     "queries": [],
     "exampleResponse": {
       "article": {
-        "comment_count" : 11,
+        "comment_count": 11,
         "article_id": 1,
         "title": "Living in the shadow of a great man",
         "topic": "mitch",
@@ -96,9 +96,22 @@
     "exampleResponse": {
       "users": [
         {
-          "username" :  "butter_bridge" ,
-          "name" : "jonny",
-          "avatar_url" : "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an user by username",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
         }
       ]
     }
