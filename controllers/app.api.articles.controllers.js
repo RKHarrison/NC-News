@@ -16,12 +16,24 @@ exports.postArticle = (req, res, next) => {
     .then(() => {
       return insertArticle(author, title, body, topic);
     })
-    .then((postedArticle) => {
-      console.log(postedArticle, '<<<<<<');
+    .then(({article_id}) => {
+      return fetchArticleById(article_id)
+    }).then(postedArticle => {
       res.status(201).send({ postedArticle });
     })
     .catch(next);
 }
+
+
+
+
+
+
+
+
+
+
+
 
 exports.getArticles = (req, res, next) => {
   const { topic, order, sort_by } = req.query;

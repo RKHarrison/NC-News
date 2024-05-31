@@ -1,12 +1,13 @@
 const db = require("../db/connection");
 
-exports.insertArticle = (author, title, body, topic, votes = 0) => {
-  const queryValues = [author, title, body, topic, votes];
+exports.insertArticle = (author, title, body, topic) => {
+  const queryValues = [author, title, body, topic];
+  console.log(queryValues);
   const sqlQuery = `
     INSERT INTO articles
-    (author, title, body, topic, votes)
+    (author, title, body, topic)
     VALUES
-    ($1 ,$2, $3, $4, $5)
+    ($1 ,$2, $3, $4)
     RETURNING *
     `;
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
