@@ -10,7 +10,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
   Promise.all([
     fetchCommentsByArticleId(article_id),
-    checkExists("articles", "article_id", article_id),
+    checkExists("articles", "article_id", article_id)
   ])
     .then((resolvedPromises) => {
       const comments = resolvedPromises[0];
