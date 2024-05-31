@@ -64,8 +64,11 @@ exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at", limit, p
     sqlQuery += ` LIMIT $${queryValues.length+1}`
     queryValues.push(limit)
   }
-
-  
+  if (p) {
+    sqlQuery += ` OFFSET $${queryValues.length+1}`
+    queryValues.push(p)
+  }
+  console.log(sqlQuery, queryValues);
   return db.query(sqlQuery, queryValues).then((articles) => articles.rows);
 };
 
