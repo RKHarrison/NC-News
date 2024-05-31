@@ -459,26 +459,23 @@ describe("GET /api/articles?order=ASCE/DESCS&sort_by=any_column", () => {
 });
 
 describe("GET /api/users/:username", () => {
-  it("200", () => {
-    it("200: responds with an object matching the requested id, with correct properties", () => {
-      return request(app)
-        .get("/api/users/rogersop")
-        .expect(200)
-        .then(({ body: { user } }) => {
-          expect(user).toHaveProperty("username", "rogersop");
-          expect(user).toHaveProperty("name", "Paul");
-        });
-    });
+  it("200: responds with an object matching the requested id, with correct properties", () => {
+    return request(app)
+      .get("/api/users/rogersop")
+      .expect(200)
+      .then(({ body: { user } }) => {
+        console.log(user);
+        expect(user).toHaveProperty("username", "rogersop");
+        expect(user).toHaveProperty("name", "paul");
+      });
   });
-  it("200", () => {
-    it("200: responds with object matching different requested id, with correct properties", () => {
-      return request(app)
-        .get("/api/users/lurker")
-        .expect(200)
-        .then(({ body: { user } }) => {
-          expect(user).toHaveProperty("username", "lurker");
-          expect(user).toHaveProperty("name", "do_nothing");
-        });
+});
+it("200: responds with object matching different requested id, with correct properties", () => {
+  return request(app)
+    .get("/api/users/lurker")
+    .expect(200)
+    .then(({ body: { user } }) => {
+      expect(user).toHaveProperty("username", "lurker");
+      expect(user).toHaveProperty("name", "do_nothing");
     });
-  });
 });
