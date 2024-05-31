@@ -491,8 +491,8 @@ it("200: responds with object matching different requested id, with correct prop
   });
 });
 
-describe("PATCH /api/articles/:article_id", () => {
-  it("200: updates comment value by postive integer and responds with updated comment object", () => {
+describe("PATCH /api/comments/:comment_id", () => {
+  it("200: updates value by postive integer and responds with updated object", () => {
     const incomingVotes = { inc_votes: 1 };
     return request(app)
       .patch("/api/comments/3")
@@ -505,7 +505,7 @@ describe("PATCH /api/articles/:article_id", () => {
         });
       });
   });
-  it("200: updates comment value by negative integer and responds with updated comment object", () => {
+  it("200: updates value by negative integer and responds with updated object", () => {
     const incrementVotes = { inc_votes: -100 };
     return request(app)
       .patch("/api/comments/3")
@@ -518,7 +518,7 @@ describe("PATCH /api/articles/:article_id", () => {
         });
       });
   });
-  it("200: updates a different comment and responds with updated comment object", () => {
+  it("200: updates a different comment and responds with updated object", () => {
     const incomingVotes = { inc_votes: 650 };
     return request(app)
       .patch("/api/comments/1")
@@ -529,6 +529,46 @@ describe("PATCH /api/articles/:article_id", () => {
           comment_id: 1,
           votes: 666,
         });
+      });
+  });
+  it("400: responds 'Bad Patch Request' when patch object has malformed body/missing fields", () => {
+    const incrementVotes = {};
+    return request(app)
+      .patch("/api/comments/3")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad PATCH Request");
+      });
+  });
+  it("400: responds 'Bad Patch Request' when patch object failing input schema validation", () => {
+    const incrementVotes = { inc_votes: "INVALID_INPUT" };
+    return request(app)
+      .patch("/api/comments/3")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad PATCH Request");
+      });
+  });
+  it("404: responds 'Not Found' when given valid but non-existing id", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/comments/987654321")
+      .send(incrementVotes)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource Not Found");
+      });
+  });
+  it("400: responds with 'Bad Request' when failing id schema validation", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/comments/NOTAVALIDID")
+      .send(incrementVotes)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad PATCH Request");
       });
   });
 })
