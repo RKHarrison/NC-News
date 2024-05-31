@@ -26,9 +26,9 @@ exports.postArticle = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { topic, order, sort_by } = req.query;
+  const { topic, order, sort_by, limit, p } = req.query;
 
-  const promises = [fetchArticles(topic, order, sort_by)];
+  const promises = [fetchArticles(topic, order, sort_by, limit, p)];
   if (topic) promises.push(checkExists("topics", "slug", topic));
 
   Promise.all(promises)

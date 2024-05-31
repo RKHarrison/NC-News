@@ -17,7 +17,7 @@ exports.insertArticle = (author, title, body, topic, article_img_url) => {
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
 };
 
-exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
+exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at", limit, p) => {
   const allowedOrders = ["ASC", "DESC"];
   const allowedSortBys = [
     "comment_count",
@@ -52,13 +52,22 @@ exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
   `;
 
   if (topic) {
-    sqlQuery += "WHERE a.topic = $1 ";
+    sqlQuery += `WHERE a.topic = $${queryValues.length+1} `;
     queryValues.push(topic);
   }
 
   sqlQuery += "GROUP BY a.article_id";
   sqlQuery += ` ORDER BY a.${sort_by} ${order}`;
 
+  if (limit) {
+    sqlQuery += ` LIMIT $${queryValues.length+1}`
+    queryValues.push(limit)
+  }
+  if (p) {
+    sqlQuery += ` OFFSET $${queryValues.length+1}`
+    queryValues.push(p)
+  }
+  
   return db.query(sqlQuery, queryValues).then((articles) => articles.rows);
 };
 
