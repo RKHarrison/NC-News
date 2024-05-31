@@ -490,3 +490,45 @@ it("200: responds with object matching different requested id, with correct prop
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  it("200: updates comment value by postive integer and responds with updated comment object", () => {
+    const incomingVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/comments/3")
+      .send(incomingVotes)
+      .expect(200)
+      .then(({ body: { patchedComment } }) => {
+        expect(patchedComment).toMatchObject({
+          comment_id: 3,
+          votes: 101,
+        });
+      });
+  });
+  it("200: updates comment value by negative integer and responds with updated comment object", () => {
+    const incrementVotes = { inc_votes: -100 };
+    return request(app)
+      .patch("/api/comments/3")
+      .send(incrementVotes)
+      .expect(200)
+      .then(({ body: { patchedComment } }) => {
+        expect(patchedComment).toMatchObject({
+          comment_id: 3,
+          votes: 0,
+        });
+      });
+  });
+  it("200: updates a different comment and responds with updated comment object", () => {
+    const incomingVotes = { inc_votes: 650 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(incomingVotes)
+      .expect(200)
+      .then(({ body: { patchedComment } }) => {
+        expect(patchedComment).toMatchObject({
+          comment_id: 1,
+          votes: 666,
+        });
+      });
+  });
+})
