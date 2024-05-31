@@ -1,16 +1,17 @@
 const {
-  fetchCommentsByArticleId,
   insertCommentByArticleId,
+  fetchCommentsByArticleId,
+  updateCommentById,
   removeCommentById,
 } = require("../models/app.api.comments.models");
-const checkExists = require("../utils/check-exists")
+const checkExists = require("../utils/check-exists");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
 
   Promise.all([
     fetchCommentsByArticleId(article_id),
-    checkExists("articles", "article_id", article_id)
+    checkExists("articles", "article_id", article_id),
   ])
     .then(([comments]) => {
       res.status(200).send({ comments });
@@ -44,6 +45,20 @@ exports.deleteCommentById = (req, res, next) => {
     })
     .then(() => {
       res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.patchCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+  const { inc_votes } = req.body;
+
+  Promise.all([
+    updateCommentById(comment_id, inc_votes),
+    checkExists("comments", "comment_id", comment_id),
+  ])
+    .then(([patchedComment]) => {
+      res.status(200).send({ patchedComment });
     })
     .catch(next);
 };
