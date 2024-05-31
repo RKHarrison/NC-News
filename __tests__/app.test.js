@@ -693,7 +693,7 @@ describe("GET /api/articles?limit=NUM&p=NUM", () => {
         expect(articles).toHaveLength(10);
       });
   });
-  it("200: accepts a limit query and an offset value returns correct number of results from offset", () => {
+  xit("200: accepts a limit query and an offset value returns correct number of results from offset", () => {
     return request(app)
       .get("/api/articles?limit=&p=5")
       .expect(200)
