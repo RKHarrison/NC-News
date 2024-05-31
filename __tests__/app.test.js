@@ -713,7 +713,7 @@ describe("GET /api/articles?limit=NUM&p=NUM", () => {
         expect(articles[0]).toHaveProperty("article_id", 2);
       });
   });
-  it("200: deals gracefully with an order and limit that take the query beyond the total rows available", () => {
+  it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
     return request(app)
       .get("/api/articles?limit=10&p=10")
       .expect(200)
@@ -721,13 +721,45 @@ describe("GET /api/articles?limit=NUM&p=NUM", () => {
         expect(articles).toHaveLength(3);
       });
   });
-  it("200: deals gracefully a query serving no results", () => {
+  it("200: responds with empty array when served a query serving no results", () => {
     return request(app)
       .get("/api/articles?limit=10&p=13")
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(0);
         expect(articles).toBeInstanceOf(Array);
+      });
+  });
+  it("400: responds 'Bad Get Request' when passed invalid limit", () => {
+    return request(app)
+      .get("/api/articles?limit=INVALID")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request");
+      });
+  });
+  it("400: responds 'Bad Get Request' when passed invalid offset", () => {
+    return request(app)
+      .get("/api/articles?limit=1&p=INVALID")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request");
+      });
+  });
+  it("400: responds 'Bad Get Request' when passed negative limit", () => {
+    return request(app)
+      .get("/api/articles?limit=-5")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request: limit must be a positive integer");
+      });
+  });
+  it("400: responds 'Bad Get Request' when passed negative offset", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=-4")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request: offset must be a positive integer");
       });
   });
 });
