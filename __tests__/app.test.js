@@ -464,8 +464,12 @@ describe("GET /api/users/:username", () => {
       .get("/api/users/rogersop")
       .expect(200)
       .then(({ body: { user } }) => {
-        expect(user).toHaveProperty("username", "rogersop");
-        expect(user).toHaveProperty("name", "paul");
+        expect(user).toMatchObject({
+          username: "rogersop",
+          name: "paul",
+          avatar_url:
+            "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+        })
       });
   });
 it("200: responds with object matching different requested id, with correct properties", () => {
