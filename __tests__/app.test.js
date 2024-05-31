@@ -655,5 +655,4 @@ describe("POST /api/articles/", () => {
         expect(msg).toBe("Resource Not Found");
       });
   });
-
 })
