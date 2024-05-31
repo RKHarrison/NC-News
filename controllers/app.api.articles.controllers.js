@@ -1,9 +1,27 @@
 const {
+  insertArticle,
   fetchArticles,
   fetchArticleById,
   updateArticleById,
 } = require("../models/app.api.articles.models");
 const checkExists = require("../utils/check-exists");
+
+exports.postArticle = (req, res, next) => {
+  const {author, title, body, topic} = req.body
+
+  Promise.all([
+    checkExists("topics", "slug", topic),
+    checkExists("users", "username", author),
+  ])
+    .then(() => {
+      return insertArticle(author, title, body, topic);
+    })
+    .then((postedArticle) => {
+      console.log(postedArticle, '<<<<<<');
+      res.status(201).send({ postedArticle });
+    })
+    .catch(next);
+}
 
 exports.getArticles = (req, res, next) => {
   const { topic, order, sort_by } = req.query;

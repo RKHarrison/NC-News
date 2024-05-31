@@ -575,19 +575,22 @@ describe("PATCH /api/comments/:comment_id", () => {
 
 describe("POST /api/articles/", () => {
   it("201: adds new article and responds with posted comment object", () => {
-    const newArticle = { author: "butter_bridge", title: "This is...", body: "very nice", topic: "cats"};
+    const newArticle = { author: "butter_bridge", title: "This is...", body: "...very nice", topic: "cats"};
     return request(app)
       .post("/api/articles/")
       .send(newArticle)
       .expect(201)
       .then(({ body: { postedArticle } }) => {
         expect(postedArticle).toMatchObject({
+          comment_count: 0,
           article_id: expect.any(Number),
+          created_at: expect.any(String),
+          votes: 0,
           article_img_url: 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700',
           author: "butter_bridge",
           title: "This is...",
           body: "...very nice",
-          topic: "cats"
+          topic: "cats",
         });
       });
   });

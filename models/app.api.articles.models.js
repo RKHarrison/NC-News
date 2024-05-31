@@ -1,5 +1,16 @@
 const db = require("../db/connection");
-const { all } = require("../app");
+
+exports.insertArticle = (author, title, body, topic, votes = 0) => {
+  const queryValues = [author, title, body, topic, votes];
+  const sqlQuery = `
+    INSERT INTO articles
+    (author, title, body, topic, votes)
+    VALUES
+    ($1 ,$2, $3, $4, $5)
+    RETURNING *
+    `;
+  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
+};
 
 exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
   const allowedOrders = ["ASC", "DESC"];
@@ -39,7 +50,7 @@ exports.fetchArticles = (topic, order = "DESC", sort_by = "created_at") => {
     sqlQuery += "WHERE a.topic = $1 ";
     queryValues.push(topic);
   }
-
+  
   sqlQuery += "GROUP BY a.article_id";
   sqlQuery += ` ORDER BY a.${sort_by} ${order}`;
 
