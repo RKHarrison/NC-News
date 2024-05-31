@@ -763,3 +763,72 @@ describe("GET /api/articles?limit=NUM&p=NUM", () => {
       });
   });
 });
+
+describe("GET /api/:article_id/comments?limit=NUM&p=NUM", () => {
+  it("200: accepts a limit query and returns correct number of results", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(10);
+      });
+  });
+  it("200: accepts a limit query and an offset value returns correct number of results from offset", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=5")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(5);
+        expect(comments[0]).toHaveProperty("created_at", "2020-04-14T20:19:00.000Z");
+      });
+  });
+  it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10&p=8")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(3);
+      });
+  });
+  it("200: responds with empty array when served a query serving no results", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10&p=99")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(0);
+        expect(comments).toBeInstanceOf(Array);
+      });
+  });
+  it("400: responds 'Bad Get Request' when passed invalid limit", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=INVALID")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request");
+      });
+  });
+  it("400: responds 'Bad Get Request' when passed invalid offset", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=1&p=INVALID")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request");
+      });
+  });
+  it("400: responds 'Bad Get Request' when passed negative limit", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=-5")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request: limit must be a positive integer");
+      });
+  });
+  it("400: responds 'Bad Get Request' when passed negative offset", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=-4")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad GET Request: offset must be a positive integer");
+      });
+  });
+})

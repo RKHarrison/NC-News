@@ -11,14 +11,21 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
-  if (err.code === "2201X") {
+  if (err.code === "42P18") {
+    res
+      .status(400)
+      .send({
+        msg: `Bad ${req.method} Request: could not determine parameter placeholder`,
+      });
+  } 
+  else if (err.code === "2201X") {
     res
       .status(400)
       .send({
         msg: `Bad ${req.method} Request: offset must be a positive integer`,
       });
   } 
-  if (err.code === "2201W") {
+  else if (err.code === "2201W") {
     res
       .status(400)
       .send({
