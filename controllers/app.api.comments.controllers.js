@@ -8,9 +8,10 @@ const checkExists = require("../utils/check-exists");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
+  const { limit, p } = req.query
 
   Promise.all([
-    fetchCommentsByArticleId(article_id),
+    fetchCommentsByArticleId(article_id, limit, p),
     checkExists("articles", "article_id", article_id),
   ])
     .then(([comments]) => {
