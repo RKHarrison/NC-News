@@ -11,6 +11,9 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
+  if (err.code === '23505') {
+    res.status(409).send({msg: `${req.method} Conflict: duplicate Primary Key violates unique constraint`})
+  }
   if (err.code === "42P18") {
     res
     .status(400)
