@@ -765,7 +765,7 @@ describe("GET /api/articles?(PAGINATION)", () => {
   });
 });
 
-describe("GET /api/:article_id/comments?limit=NUM&p=NUM", () => {
+describe("GET /api/:article_id/comments?(PAGINATION)", () => {
   it("200: accepts a limit query and returns correct number of results", () => {
     return request(app)
       .get("/api/articles/1/comments?limit=10")
@@ -776,19 +776,20 @@ describe("GET /api/:article_id/comments?limit=NUM&p=NUM", () => {
   });
   it("200: accepts a limit query and an offset value returns correct number of results from offset", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=5&p=5")
+      .get("/api/articles/1/comments?limit=2&p=2")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments).toHaveLength(5);
-        expect(comments[0]).toHaveProperty("created_at", "2020-04-14T20:19:00.000Z");
+        expect(comments).toHaveLength(2);
+        expect(comments[0]).toHaveProperty("created_at", "2020-07-21T00:20:00.000Z");
+        expect(comments[0]).toHaveProperty("comment_id", 18)
       });
   });
   it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=10&p=8")
+      .get("/api/articles/1/comments?limit=3&p=4")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments).toHaveLength(3);
+        expect(comments).toHaveLength(2);
       });
   });
   it("200: responds with empty array when served a query serving no results", () => {

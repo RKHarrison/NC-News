@@ -1,6 +1,6 @@
 const db = require("../db/connection");
 
-exports.fetchCommentsByArticleId = (article_id, limit, p) => {
+exports.fetchCommentsByArticleId = (article_id, limit, page) => {
   const queryValues = [article_id];
   let sqlQuery = `SELECT * FROM comments
         WHERE article_id = $1
@@ -9,9 +9,10 @@ exports.fetchCommentsByArticleId = (article_id, limit, p) => {
     sqlQuery += ` LIMIT $2`;
     queryValues.push(limit);
   }
-  if (p) {
+  if (page) {
+    const offset = limit * (page-1)
     sqlQuery += ` OFFSET $3`
-    queryValues.push(p)
+    queryValues.push(offset)
   }
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows);
 };
