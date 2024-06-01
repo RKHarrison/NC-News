@@ -70,7 +70,7 @@ exports.fetchArticles = (
     sqlQuery += format(`LIMIT %L `, limit);
   }
   if (page) {
-    const offset = limit * (page-1)
+    const offset = limit * (page - 1);
     sqlQuery += format(`OFFSET %L `, offset);
   }
   sqlQuery += ";";

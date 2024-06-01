@@ -1,5 +1,5 @@
 const { fetchUsers, fetchUserById } = require("../models/app.api.users.models");
-const checkExists = require('../utils/check-exists')
+const checkExists = require("../utils/check-exists");
 
 exports.getUsers = (req, res, next) => {
   fetchUsers()
@@ -14,7 +14,7 @@ exports.getUserById = (req, res, next) => {
 
   Promise.all([
     fetchUserById(username),
-    checkExists("users", "username", username)
+    checkExists("users", "username", username),
   ])
     .then(([user]) => {
       res.status(200).send({ user });

@@ -5,9 +5,9 @@ exports.fetchUsers = () => {
 };
 
 exports.fetchUserById = (username) => {
-    const queryValues = [username]
-    const sqlQuery = `SELECT * FROM users 
-        WHERE username = $1;`
+  const queryValues = [username];
+  const sqlQuery = `SELECT * FROM users 
+        WHERE username = $1;`;
 
-    return db.query(sqlQuery, queryValues).then(({rows}) => rows[0])
+  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
 };

@@ -1,5 +1,17 @@
 const db = require("../db/connection");
 
+exports.insertCommentByArticleId = (article_id, username, body) => {
+  const queryValues = [article_id, username, body];
+  const sqlQuery = `
+    INSERT INTO comments
+    (article_id, author, body)
+    VALUES
+    ($1 ,$2, $3)
+    RETURNING *
+    `;
+  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
+};
+
 exports.fetchCommentsByArticleId = (article_id, limit, page) => {
   const queryValues = [article_id];
   let sqlQuery = `SELECT * FROM comments
@@ -15,18 +27,6 @@ exports.fetchCommentsByArticleId = (article_id, limit, page) => {
     queryValues.push(offset)
   }
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows);
-};
-
-exports.insertCommentByArticleId = (article_id, username, body) => {
-  const queryValues = [article_id, username, body];
-  const sqlQuery = `
-    INSERT INTO comments
-    (article_id, author, body)
-    VALUES
-    ($1 ,$2, $3)
-    RETURNING *
-    `;
-  return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
 };
 
 exports.updateCommentById = (comment_id, inc_votes) => {
