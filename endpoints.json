@@ -2,20 +2,8 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
-<<<<<<< HEAD
   "POST /api/articles/": {
     "description": "creates a new article with optional custom url.",
-=======
-  "POST /api/topics": {
-    "description": "creates and serves a new topic",
-    "queries": [],
-    "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
-    }
-  },
-  "GET /api/topics": {
-    "description": "serves an array of all topics",
->>>>>>> origin
     "queries": [],
     "exampleResponse": {
       "article": {
@@ -128,7 +116,7 @@
     }
   },
   "DELETE /api/articles/:article_id/comments": {
-    "description": "deletes a comment by comment_id.",
+    "description": "deletes a comment that matched the requested comment_id.",
     "queries": [],
     "exampleResponse": {}
   },
