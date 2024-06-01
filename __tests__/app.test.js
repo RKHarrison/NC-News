@@ -895,3 +895,9 @@ describe("POST /api/topics", () => {
       });
   });
 });
+
+describe("DELETE /api/articles/:article_id", () => {
+  it("204 deletes object by id and responds with no content", () => {
+    return request(app).delete("/api/articles/3").expect(204);
+  });
+});
