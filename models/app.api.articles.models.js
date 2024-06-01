@@ -27,7 +27,7 @@ exports.fetchArticles = (
   order = "DESC",
   sort_by = "created_at",
   limit,
-  p
+  page
 ) => {
   const allowedOrders = ["ASC", "DESC"];
   const allowedSortBys = [
@@ -69,8 +69,9 @@ exports.fetchArticles = (
   if (limit) {
     sqlQuery += format(`LIMIT %L `, limit);
   }
-  if (p) {
-    sqlQuery += format(`OFFSET %L `, p);
+  if (page) {
+    const offset = limit * (page-1)
+    sqlQuery += format(`OFFSET %L `, offset);
   }
   sqlQuery += ";";
 

@@ -684,7 +684,7 @@ describe("POST /api/articles/", () => {
   });
 });
 
-describe("GET /api/articles?limit=NUM&p=NUM", () => {
+describe("GET /api/articles?(PAGINATION)", () => {
   it("200: accepts a limit query and returns correct number of results", () => {
     return request(app)
       .get("/api/articles?limit=10")
@@ -695,27 +695,28 @@ describe("GET /api/articles?limit=NUM&p=NUM", () => {
   });
   it("200: accepts a limit query and an offset value returns correct number of results from offset", () => {
     return request(app)
-      .get("/api/articles?limit=5&p=5")
+      .get("/api/articles?limit=2&p=2")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles).toHaveLength(5);
+        expect(articles).toHaveLength(2);
         expect(articles).toBeSortedBy("created_at", { descending: true });
-        expect(articles[0]).toHaveProperty("article_id", 5);
+        expect(articles[0]).toHaveProperty("created_at", "2020-10-16T05:03:00.000Z");
+        expect(articles[0]).toHaveProperty("article_id", 2);
       });
   });
   it("200: accepts a limit, offset AND order AND sort_by, returns correct number of sorted results from offset", () => {
     return request(app)
-      .get("/api/articles?limit=2&p=1&sort_by=article_id&order=ASC")
+      .get("/api/articles?limit=3&p=3&sort_by=article_id&order=ASC")
       .expect(200)
       .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(3);
         expect(articles).toBeSortedBy("article_id", { ascending: true });
-        expect(articles).toHaveLength(2);
-        expect(articles[0]).toHaveProperty("article_id", 2);
+        expect(articles[0]).toHaveProperty("article_id", 7)
       });
   });
   it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
     return request(app)
-      .get("/api/articles?limit=10&p=10")
+      .get("/api/articles?limit=5&p=3")
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(3);
