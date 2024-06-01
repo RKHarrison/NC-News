@@ -844,7 +844,7 @@ describe("GET /api/:article_id/comments?(PAGINATION)", () => {
 describe("POST /api/topics", () => {
   it("201: adds new row and responds with posted object", () => {
     const newTopic = {
-      slug: "topic name here",
+      slug: "newSlug",
       description: "description here",
     };
     return request(app)
@@ -853,9 +853,45 @@ describe("POST /api/topics", () => {
       .expect(201)
       .then(({ body: { postedTopic } }) => {
         expect(postedTopic).toMatchObject({
-          slug: "topic name here",
+          slug: "newSlug",
           description: "description here",
         });
+      });
+  });
+  it("409: responds 'Conflict' when trying to POST an existing Primary Key", () =>{
+    const newTopic = {
+      slug: "cats",
+      description: "description here",
+    };
+    return request(app)
+    .post("/api/topics/")
+    .send(newTopic)
+    .expect(409)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe("POST Conflict: duplicate Primary Key violates unique constraint");
+    });
+  })
+  it("400: responds 'Bad Post Request' when new object has malformed body/missing fields", () => {
+    const newTopic = {};
+    return request(app)
+      .post("/api/topics/")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
+      });
+  });
+  it("400: responds 'Bad Post Request' when new object failing input schema validation ", () => {
+    const newTopic = {
+      slug: null,
+      description: null
+    };
+    return request(app)
+      .post("/api/topics/")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
       });
   });
 });
