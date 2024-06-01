@@ -102,3 +102,9 @@ exports.updateArticleById = (article_id, inc_votes) => {
 
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
 };
+
+exports.removeArticleById = (article_id) => {
+  const queryValues = [article_id];
+  const sqlQuery = "DELETE FROM articles WHERE article_id = $1";
+  return db.query(sqlQuery, queryValues);
+};
