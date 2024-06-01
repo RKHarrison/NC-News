@@ -3,6 +3,7 @@ const {
   fetchArticles,
   fetchArticleById,
   updateArticleById,
+  removeArticleById
 } = require("../models/app.api.articles.models");
 const checkExists = require("../utils/check-exists");
 
@@ -61,4 +62,12 @@ exports.patchArticleById = (req, res, next) => {
       res.status(200).send({ patchedArticle });
     })
     .catch(next);
+};
+
+exports.deleteArticleById = (req, res) => {
+  const { article_id } = req.body;
+
+  removeArticleById(article_id).then(() =>{
+    res.status(204).send()
+  })
 };
