@@ -67,7 +67,10 @@ exports.patchArticleById = (req, res, next) => {
 exports.deleteArticleById = (req, res, next) => {
   const { article_id } = req.params;
 
-  removeArticleById(article_id)
+  checkExists("articles", "article_id", article_id)
+  .then(() => {
+    return removeArticleById(article_id)
+  })
     .then(() => {
       res.status(204).send();
     })
