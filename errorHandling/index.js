@@ -29,7 +29,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res
     .status(400)
     .send({
-      msg: `Bad ${req.method} Request: limit must be positive integer`,
+      msg: `Bad ${req.method} Request: limit must be a positive integer`,
     });
   } else if (err.code === "42P01") {
     res.status(400).send({ msg: `Bad ${req.method} Request` });
