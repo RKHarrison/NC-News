@@ -684,7 +684,7 @@ describe("POST /api/articles/", () => {
   });
 });
 
-describe("GET /api/articles?limit=NUM&p=NUM", () => {
+describe("GET /api/articles?(PAGINATION)", () => {
   it("200: accepts a limit query and returns correct number of results", () => {
     return request(app)
       .get("/api/articles?limit=10")
@@ -695,27 +695,31 @@ describe("GET /api/articles?limit=NUM&p=NUM", () => {
   });
   it("200: accepts a limit query and an offset value returns correct number of results from offset", () => {
     return request(app)
-      .get("/api/articles?limit=5&p=5")
+      .get("/api/articles?limit=2&p=2")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles).toHaveLength(5);
+        expect(articles).toHaveLength(2);
         expect(articles).toBeSortedBy("created_at", { descending: true });
-        expect(articles[0]).toHaveProperty("article_id", 5);
+        expect(articles[0]).toHaveProperty(
+          "created_at",
+          "2020-10-16T05:03:00.000Z"
+        );
+        expect(articles[0]).toHaveProperty("article_id", 2);
       });
   });
   it("200: accepts a limit, offset AND order AND sort_by, returns correct number of sorted results from offset", () => {
     return request(app)
-      .get("/api/articles?limit=2&p=1&sort_by=article_id&order=ASC")
+      .get("/api/articles?limit=3&p=3&sort_by=article_id&order=ASC")
       .expect(200)
       .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(3);
         expect(articles).toBeSortedBy("article_id", { ascending: true });
-        expect(articles).toHaveLength(2);
-        expect(articles[0]).toHaveProperty("article_id", 2);
+        expect(articles[0]).toHaveProperty("article_id", 7);
       });
   });
   it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
     return request(app)
-      .get("/api/articles?limit=10&p=10")
+      .get("/api/articles?limit=5&p=3")
       .expect(200)
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(3);
@@ -764,7 +768,7 @@ describe("GET /api/articles?limit=NUM&p=NUM", () => {
   });
 });
 
-describe("GET /api/:article_id/comments?limit=NUM&p=NUM", () => {
+describe("GET /api/:article_id/comments?(PAGINATION)", () => {
   it("200: accepts a limit query and returns correct number of results", () => {
     return request(app)
       .get("/api/articles/1/comments?limit=10")
@@ -775,19 +779,23 @@ describe("GET /api/:article_id/comments?limit=NUM&p=NUM", () => {
   });
   it("200: accepts a limit query and an offset value returns correct number of results from offset", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=5&p=5")
+      .get("/api/articles/1/comments?limit=2&p=2")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments).toHaveLength(5);
-        expect(comments[0]).toHaveProperty("created_at", "2020-04-14T20:19:00.000Z");
+        expect(comments).toHaveLength(2);
+        expect(comments[0]).toHaveProperty(
+          "created_at",
+          "2020-07-21T00:20:00.000Z"
+        );
+        expect(comments[0]).toHaveProperty("comment_id", 18);
       });
   });
   it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
     return request(app)
-      .get("/api/articles/1/comments?limit=10&p=8")
+      .get("/api/articles/1/comments?limit=3&p=4")
       .expect(200)
       .then(({ body: { comments } }) => {
-        expect(comments).toHaveLength(3);
+        expect(comments).toHaveLength(2);
       });
   });
   it("200: responds with empty array when served a query serving no results", () => {
@@ -831,4 +839,83 @@ describe("GET /api/:article_id/comments?limit=NUM&p=NUM", () => {
         expect(msg).toBe("Bad GET Request: offset must be a positive integer");
       });
   });
-})
+});
+
+describe("POST /api/topics", () => {
+  it("201: adds new row and responds with posted object", () => {
+    const newTopic = {
+      slug: "newSlug",
+      description: "description here",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { postedTopic } }) => {
+        expect(postedTopic).toMatchObject({
+          slug: "newSlug",
+          description: "description here",
+        });
+      });
+  });
+  it("409: responds 'Conflict' when trying to POST an existing Primary Key", () =>{
+    const newTopic = {
+      slug: "cats",
+      description: "description here",
+    };
+    return request(app)
+    .post("/api/topics/")
+    .send(newTopic)
+    .expect(409)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe("POST Conflict: duplicate Primary Key violates unique constraint");
+    });
+  })
+  it("400: responds 'Bad Post Request' when new object has malformed body/missing fields", () => {
+    const newTopic = {};
+    return request(app)
+      .post("/api/topics/")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
+      });
+  });
+  it("400: responds 'Bad Post Request' when new object failing input schema validation ", () => {
+    const newTopic = {
+      slug: null,
+      description: null
+    };
+    return request(app)
+      .post("/api/topics/")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
+      });
+  });
+});
+
+describe("DELETE /api/articles/:article_id", () => {
+  it("204 deletes an object by id and responds with no content", () => {
+    return request(app)
+    .delete("/api/articles/3")
+    .expect(204);
+  });
+  it("404: responds Not Found when given valid but non-exitsting id", () => {
+    return request(app)
+      .delete("/api/articles/987654321")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Resource Not Found");
+      });
+  });
+  it("400: Returns Bad Request when given invalid id", () => {
+    return request(app)
+      .delete("/api/articles/NOT_AN_ID")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad DELETE Request");
+      });
+  });
+});

@@ -27,7 +27,7 @@ exports.fetchArticles = (
   order = "DESC",
   sort_by = "created_at",
   limit,
-  p
+  page
 ) => {
   const allowedOrders = ["ASC", "DESC"];
   const allowedSortBys = [
@@ -69,8 +69,9 @@ exports.fetchArticles = (
   if (limit) {
     sqlQuery += format(`LIMIT %L `, limit);
   }
-  if (p) {
-    sqlQuery += format(`OFFSET %L `, p);
+  if (page) {
+    const offset = limit * (page-1)
+    sqlQuery += format(`OFFSET %L `, offset);
   }
   sqlQuery += ";";
 
@@ -100,4 +101,10 @@ exports.updateArticleById = (article_id, inc_votes) => {
     ;`;
 
   return db.query(sqlQuery, queryValues).then(({ rows }) => rows[0]);
+};
+
+exports.removeArticleById = (article_id) => {
+  const queryValues = [article_id];
+  const sqlQuery = "DELETE FROM articles WHERE article_id = $1";
+  return db.query(sqlQuery, queryValues);
 };
