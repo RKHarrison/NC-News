@@ -700,7 +700,10 @@ describe("GET /api/articles?(PAGINATION)", () => {
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(2);
         expect(articles).toBeSortedBy("created_at", { descending: true });
-        expect(articles[0]).toHaveProperty("created_at", "2020-10-16T05:03:00.000Z");
+        expect(articles[0]).toHaveProperty(
+          "created_at",
+          "2020-10-16T05:03:00.000Z"
+        );
         expect(articles[0]).toHaveProperty("article_id", 2);
       });
   });
@@ -711,7 +714,7 @@ describe("GET /api/articles?(PAGINATION)", () => {
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(3);
         expect(articles).toBeSortedBy("article_id", { ascending: true });
-        expect(articles[0]).toHaveProperty("article_id", 7)
+        expect(articles[0]).toHaveProperty("article_id", 7);
       });
   });
   it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
@@ -780,8 +783,11 @@ describe("GET /api/:article_id/comments?(PAGINATION)", () => {
       .expect(200)
       .then(({ body: { comments } }) => {
         expect(comments).toHaveLength(2);
-        expect(comments[0]).toHaveProperty("created_at", "2020-07-21T00:20:00.000Z");
-        expect(comments[0]).toHaveProperty("comment_id", 18)
+        expect(comments[0]).toHaveProperty(
+          "created_at",
+          "2020-07-21T00:20:00.000Z"
+        );
+        expect(comments[0]).toHaveProperty("comment_id", 18);
       });
   });
   it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
@@ -833,4 +839,23 @@ describe("GET /api/:article_id/comments?(PAGINATION)", () => {
         expect(msg).toBe("Bad GET Request: offset must be a positive integer");
       });
   });
-})
+});
+
+describe("POST /api/topics", () => {
+  it("201: adds new row and responds with posted object", () => {
+    const newTopic = {
+      slug: "topic name here",
+      description: "description here",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { postedTopic } }) => {
+        expect(postedTopic).toMatchObject({
+          slug: "topic name here",
+          description: "description here",
+        });
+      });
+  });
+});
