@@ -11,24 +11,20 @@ exports.handleCustomErrors = (err, req, res, next) => {
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
-  if (err.code === "42P18") {
+  if (err.code === "23505") {
     res
-    .status(400)
-    .send({
-      msg: `Bad ${req.method} Request: could not determine parameter placeholder`,
-    });
-  } 
-  else if (err.code === "2201X") {
+      .status(409)
+      .send({msg: `${req.method} Conflict: duplicate Primary Key violates unique constraint`});
+  }
+  else if (err.code === "42P18") {
     res
-    .status(400)
-    .send({
-      msg: `Bad ${req.method} Request: offset must be a positive integer`,
-    });
-  } 
-  else if (err.code === "2201W") {
-    res
-    .status(400)
-    .send({
+      .status(400)
+      .send({ msg: `Bad ${req.method} Request: could not determine parameter placeholder`});
+  } else if (err.code === "2201X") {
+    res.status(400)
+    .send({msg: `Bad ${req.method} Request: offset must be a positive integer`});
+  } else if (err.code === "2201W") {
+    res.status(400).send({
       msg: `Bad ${req.method} Request: limit must be a positive integer`,
     });
   } else if (err.code === "42P01") {

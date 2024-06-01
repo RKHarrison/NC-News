@@ -2,6 +2,12 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
+  "POST /api/topics": {
+    "description": "creates and serves a new topic",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [{ "slug": "football", "description": "Footie!" }]
+    },
   "GET /api/topics": {
     "description": "serves an array of all topics",
     "queries": [],

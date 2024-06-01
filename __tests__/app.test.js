@@ -700,7 +700,10 @@ describe("GET /api/articles?(PAGINATION)", () => {
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(2);
         expect(articles).toBeSortedBy("created_at", { descending: true });
-        expect(articles[0]).toHaveProperty("created_at", "2020-10-16T05:03:00.000Z");
+        expect(articles[0]).toHaveProperty(
+          "created_at",
+          "2020-10-16T05:03:00.000Z"
+        );
         expect(articles[0]).toHaveProperty("article_id", 2);
       });
   });
@@ -711,7 +714,7 @@ describe("GET /api/articles?(PAGINATION)", () => {
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(3);
         expect(articles).toBeSortedBy("article_id", { ascending: true });
-        expect(articles[0]).toHaveProperty("article_id", 7)
+        expect(articles[0]).toHaveProperty("article_id", 7);
       });
   });
   it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
@@ -780,8 +783,11 @@ describe("GET /api/:article_id/comments?(PAGINATION)", () => {
       .expect(200)
       .then(({ body: { comments } }) => {
         expect(comments).toHaveLength(2);
-        expect(comments[0]).toHaveProperty("created_at", "2020-07-21T00:20:00.000Z");
-        expect(comments[0]).toHaveProperty("comment_id", 18)
+        expect(comments[0]).toHaveProperty(
+          "created_at",
+          "2020-07-21T00:20:00.000Z"
+        );
+        expect(comments[0]).toHaveProperty("comment_id", 18);
       });
   });
   it("200: responds with shorter array when offset and limit take the query beyond max available rows", () => {
@@ -833,4 +839,59 @@ describe("GET /api/:article_id/comments?(PAGINATION)", () => {
         expect(msg).toBe("Bad GET Request: offset must be a positive integer");
       });
   });
-})
+});
+
+describe("POST /api/topics", () => {
+  it("201: adds new row and responds with posted object", () => {
+    const newTopic = {
+      slug: "newSlug",
+      description: "description here",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then(({ body: { postedTopic } }) => {
+        expect(postedTopic).toMatchObject({
+          slug: "newSlug",
+          description: "description here",
+        });
+      });
+  });
+  it("409: responds 'Conflict' when trying to POST an existing Primary Key", () =>{
+    const newTopic = {
+      slug: "cats",
+      description: "description here",
+    };
+    return request(app)
+    .post("/api/topics/")
+    .send(newTopic)
+    .expect(409)
+    .then(({ body: { msg } }) => {
+      expect(msg).toBe("POST Conflict: duplicate Primary Key violates unique constraint");
+    });
+  })
+  it("400: responds 'Bad Post Request' when new object has malformed body/missing fields", () => {
+    const newTopic = {};
+    return request(app)
+      .post("/api/topics/")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
+      });
+  });
+  it("400: responds 'Bad Post Request' when new object failing input schema validation ", () => {
+    const newTopic = {
+      slug: null,
+      description: null
+    };
+    return request(app)
+      .post("/api/topics/")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad POST Request");
+      });
+  });
+});
