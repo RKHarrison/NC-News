@@ -1,5 +1,5 @@
 const {
-  commentsControllers: { deleteCommentById, patchCommentById },
+  commentsControllers: { patchCommentById, deleteCommentById },
 } = require("../controllers");
 const commentsRouter = require("express").Router();
 
