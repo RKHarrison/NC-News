@@ -1,7 +1,5 @@
 # Northcoders News API
 ---
-# Northcoders News API
----
 ### Introduction
 Northcoders News is a REST API for a an online news service, built around an SQL database using PostgreSQL and the Node.js Express framework. It was built using Test Driven Development using Supertest and Jest.
 
@@ -12,7 +10,7 @@ The hosted version can be found here: [Northcoders News API](https://rh-nc-news.
 * Developers should **CLONE THE REPO** and use a REST client to make PATCH, POST, and DELETE requests.
 * Refer to /api/ for full HTTP Verbs, Endpoints and Action Descriptions.
 
-## Minimum Requirements
+### Minimum Requirements
 * **Node.js**: v14.0.0 or above
 * **PostgreSQL**" v12.0 or abaove.
 
