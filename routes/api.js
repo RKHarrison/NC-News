@@ -3,14 +3,12 @@ const {
 } = require("../controllers/");
 
 const apiRouter = require("express").Router();
-const cors = require("cors")
 
 const articlesRouter = require("./articles");
 const commentsRouter = require("./comments");
 const topicsRouter = require("./topics");
 const usersRouter = require("./users");
 
-app.use(cors())
 
 apiRouter.get("/", getEndpoints);
 apiRouter.use("/articles", articlesRouter);
