@@ -64,8 +64,13 @@ exports.fetchArticles = (
   if (topic) {
     sqlQuery += format(`WHERE a.topic = %L `, topic);
   }
-  sqlQuery += format("GROUP BY a.article_id ORDER BY a.%I %s ", sort_by, order);
+  sqlQuery += "GROUP BY a.article_id ";
 
+  if (sort_by === "comment_count") {
+    sqlQuery += format("ORDER BY comment_count %s ", order);
+  } else {
+    sqlQuery += format("ORDER BY a.%I %s ", sort_by, order);
+  }
   if (limit) {
     sqlQuery += format(`LIMIT %L `, limit);
   }
